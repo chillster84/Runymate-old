@@ -200,6 +200,10 @@ public class MainActivity extends Activity implements LocationListener {
 	    	startActivity(intent);
 	    	//speedField.setText("HELLO!!!");
 	    }
+	    if (v.getId() == R.id.button02) {
+	    	Intent intent = new Intent(getApplicationContext(), RoutesActivity.class);
+	    	startActivity(intent);
+	    }
 	}
 	
 	void setAnimation(ImageView image, double value) {
