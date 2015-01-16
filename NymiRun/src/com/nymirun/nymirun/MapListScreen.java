@@ -2,6 +2,7 @@ package com.nymirun.nymirun;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,7 +28,7 @@ public class MapListScreen extends Activity {
 	public static List<Integer> ecgSamples = new ArrayList<Integer>();
 	public static List<Integer> possibleRvalues = new ArrayList<Integer>();
 	
-	protected final int MAX_ECG_SAMPLES = 5000;
+	protected final int MAX_ECG_SAMPLES = 3750;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +134,7 @@ public class MapListScreen extends Activity {
 					((NclEventEcgStop) event).nymiHandle);
 				
 				int delta_x = 5;
-				int delta_y = 15000;
+				int delta_y = 10000;
 				
 				Long tsLong = System.currentTimeMillis()/1000;
 		         String ts = tsLong.toString();
@@ -148,14 +149,37 @@ public class MapListScreen extends Activity {
 		        	 if(Math.abs(ecgSamples.get(i) - ecgSamples.get(i-delta_x)) > delta_y) { //check for big enough rise from Q to R
 		        		 if(Math.abs(ecgSamples.get(i+delta_x) - ecgSamples.get(i)) > delta_y) { // check for big enough fall from R to S
 		        			 if((ecgSamples.get(i) - ecgSamples.get(i+delta_x)) * (ecgSamples.get(i) - ecgSamples.get(i-delta_x)) > 0) {
-		        				 //make sure R is higher than Q and S or lower than Q and S
-		        				 possibleRvalues.add(i); //add to R value array
-		        				 LoginScreen.appendLog("Possible R value:", i + "\n");
+		        				 //make sure R is higher than Q and S or lower than Q and S (opposite hand measurements upside down)
+		        					 possibleRvalues.add(i); //add to R value array
+			        				 LoginScreen.appendLog("Possible R value:", i + "\n");
+			        				 i=i+50; //skip some samples to avoid duplicates
 		        			 }
 		        		 }
 		        	 }
-		        		
 		         }
+		       
+		         //have possibleRvalues
+		         //look at delta_x's
+		         int diff1, diff2, diff3;
+		         double heart_rate = 0;
+		         double max_diff = 0.3;
+		         for(int i=0; i < possibleRvalues.size() + 3; i+=4) {
+		        	 diff1 = possibleRvalues.get(i + 1) - possibleRvalues.get(i);
+		        	 diff2 = possibleRvalues.get(i + 2) - possibleRvalues.get(i + 1);
+		        	 diff3 = possibleRvalues.get(i + 3) - possibleRvalues.get(i + 2);
+		        	 
+		        	 LoginScreen.appendLog("diff1 = ", diff1 + "\n");
+		        	 LoginScreen.appendLog("diff2 = ", diff2 + "\n");
+		        	 LoginScreen.appendLog("diff3 = ", diff3 + "\n");
+		        	 
+		        	 if(Math.abs(diff1 - diff2)/diff1 < max_diff && Math.abs(diff2 - diff3)/diff2 < max_diff && Math.abs(diff1 - diff3)/diff1 < max_diff) {
+		        		 //make sure the samples are within some range of each other; avoid undetected peak
+		        		 heart_rate = 250.0*3.0*60.0/(diff1+diff2+diff3);
+		        		 LoginScreen.appendLog("Possible heart rate: ", heart_rate + "\n");
+		        		 break;
+		        	 }
+		         }
+		         
 				
 			}
 			
