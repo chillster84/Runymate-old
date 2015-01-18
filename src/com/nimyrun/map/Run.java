@@ -6,20 +6,16 @@ import java.util.List;
 
 public class Run {
 
-	String routeName;
 	double distance;
 	double time;
 	List<RunMetric> runMetrics;
 
-	public Run(String routeName) {
+	public Run(double distance, double time) {
 		super();
-		this.routeName = routeName;
+		this.distance = distance;
+		this.time = time;
 		this.runMetrics = new ArrayList<RunMetric>();
 
-	}
-
-	public String getRouteName() {
-		return routeName;
 	}
 
 	public List<RunMetric> getRunMetrics() {
