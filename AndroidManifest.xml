@@ -54,6 +54,10 @@
             android:name=".RoutesActivity"
             android:label="@string/title_activity_routes" >
         </activity>
+        <activity
+            android:name=".RunsActivity"
+            android:label="@string/title_activity_runs" >
+        </activity>
     </application>
 
 </manifest>

@@ -57,7 +57,7 @@ public class RoutesImageAdapter extends BaseAdapter {
 	public String getRouteUrl(Route route) {
 		String baseUrl = "https://maps.googleapis.com/maps/api/staticmap?path=color:0x0000ff%7Cweight:5%7C";
 		int i = 0;
-		for(LatLng pt : route.getRoute()) {
+		for(LatLng pt : route.getPath()) {
 			if (i == 0) {
 				String point = pt.latitude + "," + pt.longitude;
 				baseUrl += point;

@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class RoutesActivity extends Activity {
@@ -20,6 +23,14 @@ public class RoutesActivity extends Activity {
 		routes = getSampleRoutes();
          
 		list = (ListView) findViewById(R.id.listView1);
+		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
+				Intent intent = new Intent(getApplicationContext(),
+						RunsActivity.class);
+				startActivity(intent);
+			}
+		});
 		adapter = new RoutesImageAdapter(this, routes);
         list.setAdapter(adapter);
     }
@@ -45,10 +56,10 @@ public class RoutesActivity extends Activity {
 		Route routeC = new Route("Route C");
 		Route routeD = new Route("Route D");
 		Route routeE = new Route("Route E");
-		routeB.setRoute(routeA.getRoute());
-		routeC.setRoute(routeA.getRoute());
-		routeD.setRoute(routeA.getRoute());
-		routeE.setRoute(routeA.getRoute());
+		routeB.setPath(routeA.getPath());
+		routeC.setPath(routeA.getPath());
+		routeD.setPath(routeA.getPath());
+		routeE.setPath(routeA.getPath());
 
 		// put in list
 		routes.add(routeA);
