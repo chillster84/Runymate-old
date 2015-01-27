@@ -1,6 +1,9 @@
 package com.nimyrun.map;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -13,21 +16,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
-//import android.widget.FrameLayout;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Button;
-//import java.util.ArrayList;
 
-//import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.MapFragment;
+//import android.widget.FrameLayout;
+//import java.util.ArrayList;
+//import com.google.android.gms.maps.CameraUpdate;
 
 public class MainActivity extends Activity implements LocationListener {
 	private final static double EARTH_RADIUS = 6371000; // in metres
@@ -230,6 +233,12 @@ public class MainActivity extends Activity implements LocationListener {
 			intent.putExtra("heartPoints", heartMap);
 			startActivity(intent);
 		}
+		if (v.getId() == R.id.button02) {
+			Intent intent = new Intent(getApplicationContext(),
+					RoutesActivity.class);
+			startActivity(intent);
+		}
+
 	}
 
 	/*

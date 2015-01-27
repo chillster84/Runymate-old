@@ -5,5 +5,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="button_end">Display Result</string>
-
+    <string name="title_activity_routes">RoutesActivity</string>
+    <string name="title_activity_runs">RunsActivity</string>
 </resources>
