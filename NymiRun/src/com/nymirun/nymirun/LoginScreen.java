@@ -2,12 +2,12 @@ package com.nymirun.nymirun;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -17,15 +17,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Environment;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bionym.ncl.Ncl;
@@ -50,10 +48,10 @@ public class LoginScreen extends Activity {
 	protected boolean[][] ledPatterns;
 	protected static ArrayList<Integer> unwantedNymiList = new ArrayList<Integer>();
 	
+	protected WakeLock wakeLock;
+	
 	protected static final int NCL_PROVISION_ID_SIZE = 16;
 	
-	Button btnDiscover;
-	TextView tvFirstTime;
 	RadioButton led0;
 	RadioButton led1;
 	RadioButton led2;
@@ -76,23 +74,23 @@ public class LoginScreen extends Activity {
 	 * Initiate Nymi Communication Library (NCL)
 	 * Set onclicklistener for Discover button */
 	
+	@SuppressLint("SdCardPath")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login_screen);
 		
-		btnDiscover = (Button) findViewById(R.id.btnDiscover);
-		tvFirstTime = (TextView) findViewById(R.id.tvFirstTime);
-		
-		// delete the original file
+		// Using a log file. Delete old one if it exists
 		try {
-	        // delete the original file
 			new File("/mnt/sdcard" + "/nymilog.txt").delete(); 
 	    }
 	    catch (Exception e) {
 	        Log.e("tag", e.getMessage());
 	    }
 		
+		PowerManager mgr = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+		//wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+		//wakeLock.acquire();
 		
 		/* try to load user's Nymi configuration. If one exists, save it in the global 'nymiProvision' */
 		final SharedPreferences prefs = this.getSharedPreferences("ProvisionSP", Context.MODE_PRIVATE);
@@ -102,6 +100,10 @@ public class LoginScreen extends Activity {
 		if (!provid.equals("NULL") || !provkey.equals("NULL")) {
 			//get the saved provision, do validation process
 			nymiProvision = loadProvision(provid, provkey);
+			provisionMode = false;
+		}
+		else {
+			provisionMode = true;
 		}
 		
 		/*Initialization of Nymi Communication Library (NCL)*/
@@ -109,7 +111,7 @@ public class LoginScreen extends Activity {
 		NclCallback nclCallback = new MyNclCallbackLogin();
 		
 		// If you are running on the android emulator, ip should be "ip of your comp"
-		String ip = "138.51.239.61";
+		//String ip = "192.168.1.102";
 		
 		// If you are running on an android device, change it to the IP of the device
 		//String ip ="192.168.158.38";
@@ -124,89 +126,13 @@ public class LoginScreen extends Activity {
         if (!result) { // failed to initialize NCL
             Toast.makeText(mActivity, "Failed to initialize NCL library!", Toast.LENGTH_LONG).show();
         }
-		
-		/* If first time user, need to discover Nymi band first. On button click, discover all Nymis */
-		btnDiscover.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				
-				pd = new ProgressDialog(mActivity);
-				pd.setTitle("Searching for Nymi Band...");
-				pd.setMessage("Please wait");
-				pd.setCancelable(false);
-				pd.setIndeterminate(true);
-				
-				pd.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						pd.dismiss();
-					}
-				});
-						
-				pd.show();
-					
-				ThreadUtil.runTask(new Runnable() { // make sure we are not running on the UI thread
-		            @Override
-		            public void run() {
-		            	/* Start discovery process. Introduce a 30sec timeout */
-						if(Ncl.startDiscovery() == false) {
-							state = State.FAILED;
-				            appendLog("Discover Button", "Start discovery failed");
-						}
-		            }
-		        });
-				
-				state = State.DISCOVERING;
-				
-				nymiScan = new CountDownTimer(30000, 5000) {
-					public void onTick(long millisUntilFinished) {
-						appendLog("Countdown Timer", "seconds remaining: " + millisUntilFinished/1000);
-					}
-
-					public void onFinish() {
-						appendLog("Countdown Timer", "Finished 30 seconds of scanning");
-						
-						if(Ncl.stopScan() == false) {
-							//error stopping scan. abort?
-						}
-						appendLog("Countdown Timer", "Stopped Scanning");
-						pd.dismiss();
-						
-						AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-
-					    builder.setTitle("Discovery Timeout");
-					    builder.setMessage("Do you want to go back and try again or just access your data?");
-
-					    builder.setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
-
-					        public void onClick(DialogInterface dialog, int which) {
-					            // Dismiss dialog, user will click discover button again
-					            dialog.dismiss();
-					        }
-
-					    });
-
-					    builder.setNegativeButton("Access Data", new DialogInterface.OnClickListener() {
-
-					        @Override
-					        public void onClick(DialogInterface dialog, int which) {
-					            // Go to maps screen
-					            dialog.dismiss();
-					            Intent intent = new Intent(mActivity, MapListScreen.class);
-					            intent.putExtra("validated", false);
-				                startActivity(intent);
-					        }
-					    });
-
-					    AlertDialog alert = builder.create();
-					    alert.show();
-						
-						
-					}
-				}.start();	
-			}
-		});
 	}
+	
+	@Override
+    public void onStop() {
+        super.onStop();
+        //wakeLock.release();
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -237,11 +163,6 @@ public class LoginScreen extends Activity {
 		byte[] id = new byte[16];
 		byte[] key = new byte[16];
 		NclProvision p = new NclProvision();
-		provisionMode = false;
-		
-		//don't show first time user interaction
-		btnDiscover.setVisibility(View.GONE);
-		tvFirstTime.setVisibility(View.GONE);
 		
 		appendLog("provid", provid);
 		appendLog("provkey", provkey);
@@ -264,7 +185,6 @@ public class LoginScreen extends Activity {
 		appendLog("p.key", Arrays.toString(p.key.v));
 		
 		return p;
-		
 	}
 	
 	/* storeProvision function. Update shared preferences with
@@ -310,8 +230,6 @@ public class LoginScreen extends Activity {
 				led2.setChecked(agreement.leds[0][2]);
 				led3.setChecked(agreement.leds[0][3]);
 				led4.setChecked(agreement.leds[0][4]);
-				
-				
 				
 			    builder1.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 			    	public void onClick(DialogInterface dialog, int id) {
@@ -367,6 +285,7 @@ public class LoginScreen extends Activity {
 							            dialog.dismiss();
 							            Intent intent = new Intent(mActivity, MapListScreen.class);
 							            intent.putExtra("validated", false);
+							            intent.putExtra("nymiHandle", -1);
 						                startActivity(intent);
 							        }
 							    });
@@ -386,6 +305,148 @@ public class LoginScreen extends Activity {
 
 			    AlertDialog alert1 = builder1.create();
 			    alert1.show();
+			}
+		});
+	}
+	
+	private void startNymiDiscovery() {
+		
+		if(Ncl.startDiscovery() == false) {
+			//error starting discovery. Abort?
+			state = State.FAILED;
+			appendLog("startNymiDiscovery()", "Start discovery failed");
+		}
+		
+		state = State.DISCOVERING;
+		
+		runOnUiThread(new Runnable() {
+			public void run() {
+				
+				pd = new ProgressDialog(mActivity);
+				pd.setTitle("Searching for Nymi Band...");
+				pd.setMessage("Please wait");
+				pd.setCancelable(false);
+				pd.setIndeterminate(true);
+				pd.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							pd.dismiss();
+						}
+					});
+					
+				pd.show();
+		
+				nymiScan = new CountDownTimer(15000, 5000) {
+					public void onTick(long millisUntilFinished) {
+						appendLog("Countdown Timer", "seconds remaining: " + millisUntilFinished/1000);
+					}
+
+					public void onFinish() {
+						appendLog("Countdown Timer", "Finished 30 seconds of scanning");
+				
+						if(Ncl.stopScan() == false) {
+							//error stopping scan. abort?
+						}
+						
+						pd.dismiss();
+						
+						AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+		
+					    builder.setTitle("Discovery Timeout");
+					    builder.setMessage("Do you want to try again or just access your data?");
+		
+					    builder.setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+		
+					        public void onClick(DialogInterface dialog, int which) {
+					            // call discover process again
+					            dialog.dismiss();
+					            startNymiDiscovery();
+					        }
+		
+					    });
+		
+					    builder.setNegativeButton("Access Data", new DialogInterface.OnClickListener() {
+		
+					        @Override
+					        public void onClick(DialogInterface dialog, int which) {
+					            // Go to maps screen
+					            dialog.dismiss();
+					            Intent intent = new Intent(mActivity, MapListScreen.class);
+					            intent.putExtra("validated", false);
+					            intent.putExtra("nymiHandle", -1);
+				                startActivity(intent);
+					        }
+					    });
+		
+					    AlertDialog alert = builder.create();
+					    alert.show();
+					}	
+				}.start();	
+			}
+		});
+	}
+	
+	private void startNymiFind() {
+		// TODO Auto-generated method stub
+		if(Ncl.startFinding(new NclProvision[] {nymiProvision}, false) == false) {
+			//error starting find. Abort?
+			state = State.FAILED;
+			appendLog("startNymiFind()", "Start finding failed");
+		}
+		
+		state = State.FINDING;
+		
+		runOnUiThread(new Runnable() {
+			public void run() {
+	
+				pdfind = new ProgressDialog(mActivity);
+				pdfind.setTitle("Searching for your Saved Nymi...");
+				pdfind.setMessage("Please wait");
+				pdfind.setCancelable(false);
+				pdfind.setIndeterminate(true);
+				pdfind.show();
+				
+				//search for this saved Nymi for 15 seconds
+				nymiScan = new CountDownTimer(15000, 5000) {
+					public void onTick(long millisUntilFinished) {
+						appendLog("Countdown Timer", "seconds remaining: " + millisUntilFinished / 1000);
+					}
+		    		public void onFinish() {
+		    			
+						if(Ncl.stopScan() == false) {
+							//error stopping scan. abort?
+						}
+						
+						pdfind.dismiss();
+						
+						AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+						builder.setTitle("Cannot Find Your Nymi");
+					    builder.setMessage("Do you want to try again or just access your data?");
+					    builder.setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+	
+					        public void onClick(DialogInterface dialog, int which) {
+					            dialog.dismiss();
+					            startNymiFind();
+					        }
+	
+					    });
+					    builder.setNegativeButton("Access Data", new DialogInterface.OnClickListener() {
+	
+					        @Override
+					        public void onClick(DialogInterface dialog, int which) {
+					            // Go to maps screen
+					            dialog.dismiss();
+					            Intent intent = new Intent(mActivity, MapListScreen.class);
+				                intent.putExtra("validated", false);
+				                intent.putExtra("nymiHandle", -1);
+				                startActivity(intent);
+					        }
+					    });
+						
+						AlertDialog alert = builder.create();
+					    alert.show();
+					}
+				}.start();
 			}
 		});
 	}
@@ -411,70 +472,13 @@ public class LoginScreen extends Activity {
 	            	
 	    			if(!provisionMode) {
 	    				appendLog("NCL_EVENT_INIT", "Validation Mode: Start finding the Nymi");
-	    				if(Ncl.startFinding(new NclProvision[] {nymiProvision}, false) == false) {
-	    					//error starting find. Abort?
-	    					state = State.FAILED;
-	    				}
-	    				
-	    				state = State.FINDING;
-	    				
-	    			runOnUiThread(new Runnable() {
-	    				public void run() {
-	    			
-		    				pdfind = new ProgressDialog(mActivity);
-		    				pdfind.setTitle("Searching for your Saved Nymi...");
-		    				pdfind.setMessage("Please wait");
-		    				pdfind.setCancelable(false);
-		    				pdfind.setIndeterminate(true);
-		    						
-		    				pdfind.show();
-	    					
-	    					//search for this saved Nymi for 10 seconds
-		    				nymiScan = new CountDownTimer(10000, 5000) {
-		    					public void onTick(long millisUntilFinished) {
-		    						appendLog("Countdown Timer", "seconds remaining: " + millisUntilFinished / 1000);
-		    					}
-					    		public void onFinish() {
-									//TODO: appendLog("Countdown Timer", "Finished 10 seconds of scanning");
-									
-									if(Ncl.stopScan() == false) {
-										//error stopping scan. abort?
-									}
-									//TODO: appendLog("Countdown Timer", "Stopped Scanning");
-									pdfind.dismiss();
-									
-									AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-									builder.setTitle("Cannot Find Your Nymi");
-								    builder.setMessage("Do you want to try again or just access your data?");
-								    builder.setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
-
-								        public void onClick(DialogInterface dialog, int which) {
-								            // Dismiss dialog, TODO: find again, call init?
-								            dialog.dismiss();
-								        }
-
-								    });
-								    builder.setNegativeButton("Access Data", new DialogInterface.OnClickListener() {
-
-								        @Override
-								        public void onClick(DialogInterface dialog, int which) {
-								            // Go to maps screen
-								            dialog.dismiss();
-								            Intent intent = new Intent(mActivity, MapListScreen.class);
-								            intent.putExtra("validated", false);
-							                startActivity(intent);
-								        }
-								    });
-									
-									AlertDialog alert = builder.create();
-								    alert.show();
-								}
-			    			}.start();
-	    				}
-	    			});
+	    				startNymiFind();
+	    			}
+	    			else {
+	    				appendLog("NCL_EVENT_INIT", "Discovery Mode: Discover new Nymi");
+	    				startNymiDiscovery();
+	    			}
 	            }
-	    					
-	        }
 	            
 	            else {
 	            	runOnUiThread(new Runnable() {
@@ -537,6 +541,8 @@ public class LoginScreen extends Activity {
 	                
 	                //Provisioning complete. Go to Map List Screen
 	                Intent intent = new Intent(mActivity, MapListScreen.class);
+	                intent.putExtra("validated", true);
+	                intent.putExtra("nymiHandle", nymiHandle);
 	                startActivity(intent);
 	                
 				}
@@ -585,11 +591,14 @@ public class LoginScreen extends Activity {
 				}
 			}
 		}
+
+
 	}
 	
 	/* appendLog function. Writes the app log
 	 * to a file stored on phone memory. Used
 	 * for debugging purposes */
+	@SuppressLint("SdCardPath")
 	public static void appendLog(String text1, String text2)
 	{      
 		Log.d(text1, text2);

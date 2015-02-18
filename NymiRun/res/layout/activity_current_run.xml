@@ -7,25 +7,26 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.nymirun.nymirun.MapListScreen" >
+    tools:context="com.nymirun.nymirun.CurrentRun" >
 
-    <Button
-        android:id="@+id/startRun"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:onClick="startRun"
-        android:text="@string/start_run" />
-
-    <Button
-        android:id="@+id/testPedometerButton"
+    <TextView
+        android:id="@+id/tvIntervalHR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:onClick="testPedometer"
-        android:text="@string/test_pedometer" />
+        android:layout_below="@+id/startRecordingButton"
+        android:text="@string/timer_started" />
+
+    <Button
+        android:id="@+id/startRecordingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="runIntervalTimer"
+        android:text="@string/start_recording" />
 
 </RelativeLayout>
