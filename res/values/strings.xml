@@ -7,4 +7,6 @@
     <string name="button_end">Display Result</string>
     <string name="title_activity_routes">RoutesActivity</string>
     <string name="title_activity_runs">RunsActivity</string>
+    <string name="title_activity_run_metrics">RunMetricsActivity</string>
+
 </resources>
