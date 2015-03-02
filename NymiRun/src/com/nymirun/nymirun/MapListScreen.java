@@ -77,7 +77,7 @@ public class MapListScreen extends Activity {
 				    @Override
 				    public void onClick(DialogInterface dialog, int which) {
 				        // the user clicked on intervals[which]
-				    	Intent intent = new Intent(mActivity, CurrentRun.class);
+				    	Intent intent = new Intent(mActivity, Pedometer.class);
 				    	intent.putExtra("interval", (which+1)*60);
 				    	intent.putExtra("nymiHandle", nymiHandle);
 				        startActivity(intent);

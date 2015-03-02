@@ -13,7 +13,7 @@
     <string name="finish">Finish</string>
     <string name="title_activity_current_run">Current Run</string>
     <string name="timer_started">Recording Heart Rate Every 60 Seconds</string>
-    <string name="start_recording">Recording Heart Rate Every 60 Seconds</string>
+    <string name="start_recording">Start Recording Heart Rate</string>
     <string name="notification_subtitle">Counting your steps</string>
 
     <string name="started">Pedometer started.</string>

@@ -161,14 +161,14 @@
     </LinearLayout>
 
     <!-- Desired pace/speed row -->
+
     <LinearLayout
         android:id="@+id/desired_pace_control"
-        android:paddingTop="@dimen/row_spacing" 
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/row_spacing" >
     
         <!-- Button "-", for decrementing desired pace/speed -->
         <Button android:id="@+id/button_desired_pace_lower"
@@ -207,5 +207,26 @@
             android:layout_height="@dimen/button"/>
 
     </LinearLayout>
+    
+    <LinearLayout
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:layout_width="@dimen/desired_pace_width"
+            android:layout_height="wrap_content">
+    <Button
+        android:id="@+id/startRecordingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="runIntervalTimer"
+        android:text="@string/start_recording" />
+    
+            <TextView
+        android:id="@+id/tvIntervalHR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/timer_started" />
+
+    </LinearLayout>
+    
    
 </LinearLayout>
