@@ -31,6 +31,9 @@ public class RunMetricsActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Bundle b = getIntent().getExtras();
+		run = (Run) b.getParcelable("run");
+
 		setContentView(R.layout.activity_run_metrics);
 		// Initialize map
 		try {
@@ -38,7 +41,7 @@ public class RunMetricsActivity extends Activity {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		run = mockRun();
+
 		PolylineOptions polylineOptions = new PolylineOptions();
 		Builder builder = LatLngBounds.builder();
 		for (RunMetric runMetric : run.getRunMetrics()) {
@@ -94,30 +97,6 @@ public class RunMetricsActivity extends Activity {
 		return found;
 	}
 
-	private Run mockRun() {
-		Route routeA = new Route("Route A");
-
-		// add points
-		routeA.addPoint(43.66151856, -79.39409156);
-		routeA.addPoint(43.66214725, -79.39433832);
-		routeA.addPoint(43.66246547, -79.39487476);
-		routeA.addPoint(43.66230248, -79.3957438);
-		routeA.addPoint(43.66184455, -79.39619441);
-		routeA.addPoint(43.66108391, -79.395894);
-		routeA.addPoint(43.66099077, -79.3951859);
-		routeA.addPoint(43.6612275, -79.39416666);
-		routeA.addPoint(43.66151856, -79.39409156);
-
-		Run run = new Run(222.22, 22.2);
-		int i = 0;
-		for (LatLng point : routeA.getPath()) {
-			i++;
-			run.addRunMetrics(new RunMetric(point, 22.2 + i, 22.2 + i,
-					20150101 + i));
-		}
-
-		return run;
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

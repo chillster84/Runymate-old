@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class RoutesActivity extends Activity {
 
 	ListView list;
@@ -20,7 +22,11 @@ public class RoutesActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_routes);
-		routes = getSampleRoutes();
+
+		// This is the main location of routes
+		// This should get loaded from device storage
+		// Using StoreRoutes.java > RetrieveRoutes()
+		routes = getFakeRoutes();
          
 		list = (ListView) findViewById(R.id.listView1);
 		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -28,6 +34,7 @@ public class RoutesActivity extends Activity {
 			public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
 				Intent intent = new Intent(getApplicationContext(),
 						RunsActivity.class);
+				intent.putExtra("route", routes.get(pos));
 				startActivity(intent);
 			}
 		});
@@ -35,7 +42,7 @@ public class RoutesActivity extends Activity {
         list.setAdapter(adapter);
     }
      
-	private List<Route> getSampleRoutes() {
+	private List<Route> getFakeRoutes() {
 		List<Route> routes = new ArrayList<Route>();
 		// create routes
 		Route routeA = new Route("Route A");
@@ -61,6 +68,13 @@ public class RoutesActivity extends Activity {
 		routeD.setPath(routeA.getPath());
 		routeE.setPath(routeA.getPath());
 
+		// add fake runs
+		routeA.setRuns(getMockRuns(5));
+		routeB.setRuns(getMockRuns(4));
+		routeC.setRuns(getMockRuns(3));
+		routeD.setRuns(getMockRuns(2));
+		routeE.setRuns(getMockRuns(1));
+
 		// put in list
 		routes.add(routeA);
 		routes.add(routeB);
@@ -68,6 +82,42 @@ public class RoutesActivity extends Activity {
 		routes.add(routeD);
 		routes.add(routeE);
 		return routes;
+	}
+
+	private List<Run> getMockRuns(int n) {
+		List<Run> runs = new ArrayList<Run>();
+
+		// add n runs
+		while (n != 0) {
+			runs.add(mockRun());
+			n--;
+		}
+		return runs;
+	}
+
+	private Run mockRun() {
+		Route routeA = new Route("Route A");
+
+		// add points
+		routeA.addPoint(43.66151856, -79.39409156);
+		routeA.addPoint(43.66214725, -79.39433832);
+		routeA.addPoint(43.66246547, -79.39487476);
+		routeA.addPoint(43.66230248, -79.3957438);
+		routeA.addPoint(43.66184455, -79.39619441);
+		routeA.addPoint(43.66108391, -79.395894);
+		routeA.addPoint(43.66099077, -79.3951859);
+		routeA.addPoint(43.6612275, -79.39416666);
+		routeA.addPoint(43.66151856, -79.39409156);
+
+		Run run = new Run(222.22, 22.2);
+		int i = 0;
+		for (LatLng point : routeA.getPath()) {
+			i++;
+			run.addRunMetrics(new RunMetric(point, 22.2 + i, 22.2 + i,
+					20150101 + i));
+		}
+
+		return run;
 	}
 
 	@Override

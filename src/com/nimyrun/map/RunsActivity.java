@@ -1,8 +1,5 @@
 package com.nimyrun.map;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,11 +11,15 @@ public class RunsActivity extends Activity {
 
 	ListView list;
 	RunsAdapter adapter;
-	List<Run> runs;
+	Route route;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Bundle b = getIntent().getExtras();
+		route = (Route) b.getParcelable("route");
+
 		setContentView(R.layout.activity_routes);
 
 		list = (ListView) findViewById(R.id.listView1);
@@ -27,20 +28,12 @@ public class RunsActivity extends Activity {
 			public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
 				Intent intent = new Intent(getApplicationContext(),
 						RunMetricsActivity.class);
+				intent.putExtra("run", route.getRuns().get(pos));
 				startActivity(intent);
 			}
 		});
-		runs = getMockRuns();
-		adapter = new RunsAdapter(this, runs);
+		adapter = new RunsAdapter(this, route.getRuns());
 		list.setAdapter(adapter);
 	}
 
-	private List<Run> getMockRuns() {
-		List<Run> runs = new ArrayList<Run>();
-		runs.add(new Run(2000, 2000));
-		runs.add(new Run(2000, 2000));
-		runs.add(new Run(2000, 2000));
-		runs.add(new Run(2000, 2000));
-		return runs;
-	}
 }
