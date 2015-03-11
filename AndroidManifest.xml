@@ -71,6 +71,10 @@
             android:name=".RunMetricsActivity"
             android:label="@string/title_activity_run_metrics" >
         </activity>
+        <activity
+            android:name=".RouteSelectionActivity"
+            android:label="@string/title_activity_route_selection" >
+        </activity>
     </application>
 
 </manifest>

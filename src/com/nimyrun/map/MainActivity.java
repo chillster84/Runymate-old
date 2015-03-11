@@ -233,11 +233,6 @@ public class MainActivity extends Activity implements LocationListener {
 			intent.putExtra("heartPoints", heartMap);
 			startActivity(intent);
 		}
-		if (v.getId() == R.id.button02) {
-			Intent intent = new Intent(getApplicationContext(),
-					RoutesActivity.class);
-			startActivity(intent);
-		}
 
 	}
 

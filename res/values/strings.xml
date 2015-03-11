@@ -8,5 +8,6 @@
     <string name="title_activity_routes">RoutesActivity</string>
     <string name="title_activity_runs">RunsActivity</string>
     <string name="title_activity_run_metrics">RunMetricsActivity</string>
+    <string name="title_activity_route_selection">RouteSelectionActivity</string>
 
 </resources>
