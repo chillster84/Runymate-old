@@ -55,6 +55,8 @@ public class MainActivity extends Activity implements LocationListener {
 	private GoogleMap gMap;
 	private Polyline polyline;
 
+	private Timer timer;
+
 	private double latitude = 0;
 	private double longitude = 0;
 	private double newLatitude = 0;
@@ -313,7 +315,7 @@ public class MainActivity extends Activity implements LocationListener {
 	
 	private void setTimer(int frequency, int delay) {
 		final Handler handler = new Handler();
-		Timer timer = new Timer();
+		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
@@ -391,5 +393,14 @@ public class MainActivity extends Activity implements LocationListener {
 			latitude = newLatitude;
 			longitude = newLongitude;
 		}
+	}
+	
+	public void onStop(){
+		if (timer != null) {
+			timer.cancel();
+			timer.purge();
+			timer = null;
+		}
+		super.onStop();
 	}
 }
