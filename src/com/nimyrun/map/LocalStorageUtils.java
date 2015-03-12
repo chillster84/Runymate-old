@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -23,7 +24,11 @@ import com.google.gson.reflect.TypeToken;
  */
 /* @formatter:on */
 
-public class StoreRoutes {
+public final class LocalStorageUtils {
+
+	public LocalStorageUtils() {
+		super();
+	}
 
 	/**
 	 * Using Gson, converts object into a json string, and stores with
@@ -32,12 +37,51 @@ public class StoreRoutes {
 	 * @param sharedPreferences
 	 * @param routes
 	 */
-	public void storeRoutes(SharedPreferences sharedPreferences,
+	public static void storeRoutes(SharedPreferences sharedPreferences,
 			List<Route> routes) {
 		Editor editor = sharedPreferences.edit();
 		String json = new Gson().toJson(routes);
 		editor.putString("routes", json);
 		editor.commit();
+	}
+
+	public static void addRunToRoute(SharedPreferences sharedPreferences,
+			Run run,
+			int routePosition) {
+		// get old route list
+		List<Route> routes = retrieveRoutes(sharedPreferences);
+
+		// get the route to be updated
+		Route route = routes.get(routePosition);
+
+		// add run the the route
+		route.addRun(run);
+
+		// update route in the position
+		routes.set(routePosition, route);
+
+		// store updated list of routes
+		storeRoutes(sharedPreferences, routes);
+	}
+
+	public static void addNewRouteFromRun(SharedPreferences sharedPreferences,
+			Run run) {
+		// create route from run
+		Route route = new Route("blah");
+		route.addRun(run);
+		for (RunMetric runMetric : run.getRunMetrics()) {
+			LatLng point = runMetric.getLatlng();
+			route.addPoint(point.latitude, point.longitude);
+		}
+
+		// get old route list
+		List<Route> routes = retrieveRoutes(sharedPreferences);
+
+		// add new route to route list
+		routes.add(route);
+
+		// store updated list of routes
+		storeRoutes(sharedPreferences, routes);
 	}
 
 
@@ -48,7 +92,7 @@ public class StoreRoutes {
 	 * @param sharedPreferences
 	 * @return
 	 */
-	public List<Route> retrieveRoutes(SharedPreferences sharedPreferences) {
+	public static List<Route> retrieveRoutes(SharedPreferences sharedPreferences) {
 		String json = sharedPreferences.getString("routes", null);
 		Type type = new TypeToken<List<Route>>() {
 		}.getType();

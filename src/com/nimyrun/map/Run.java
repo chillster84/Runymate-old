@@ -45,6 +45,10 @@ public class Run implements Parcelable {
 		this.time = time;
 	}
 
+	public void setRunMetrics(List<RunMetric> runMetrics) {
+		this.runMetrics = runMetrics;
+	}
+
 	protected Run(Parcel in) {
 		distance = in.readDouble();
 		time = in.readDouble();

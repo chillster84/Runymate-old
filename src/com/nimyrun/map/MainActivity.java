@@ -1,6 +1,8 @@
 package com.nimyrun.map;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -71,6 +73,7 @@ public class MainActivity extends Activity implements LocationListener {
 	private int errorFactor = 1;
 	private HashMap<String, Double> speedMap = new HashMap<String, Double>();
 	private HashMap<String, Double> heartMap = new HashMap<String, Double>();
+	private List<RunMetric> runMetrics = new ArrayList<RunMetric>();
 
 	// Horizontal offset of speed animation graphic from previous speed
 	// measurement.
@@ -227,12 +230,18 @@ public class MainActivity extends Activity implements LocationListener {
 	 */
 	public void onButtonClick(View v) {
 		if (v.getId() == R.id.button01) {
+			Run run = new Run(distance, (double) (count * LOCATION_MIN_TIME));
+			run.setRunMetrics(runMetrics);
+
 			Intent intent = new Intent(getApplicationContext(),
 					ActivityResults.class);
 			intent.putExtra("speedPoints", speedMap);
 			intent.putExtra("distance", distance);
 			intent.putExtra("time", (double) (count * LOCATION_MIN_TIME));
 			intent.putExtra("heartPoints", heartMap);
+			intent.putExtra("run", run);
+			// set to true when this is a newly captured route
+			intent.putExtra("isNewRoute", true);
 			startActivity(intent);
 		}
 
@@ -337,7 +346,9 @@ public class MainActivity extends Activity implements LocationListener {
 		count++;
 
 		if (speed < 15) { // Fastest recorded running speed is about 12 m/s
-
+			runMetrics.add(new RunMetric(new LatLng(location.getLatitude(),
+					location.getLongitude()), speed, heartbeat, System
+					.currentTimeMillis()));
 			speedMap.put(count + "", speed);
 			heartMap.put(count + "", heartbeat);
 		}

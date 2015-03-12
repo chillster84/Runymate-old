@@ -1,16 +1,21 @@
 package com.nimyrun.map;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class RoutesActivity extends Activity {
 
@@ -26,7 +31,9 @@ public class RoutesActivity extends Activity {
 		// This is the main location of routes
 		// This should get loaded from device storage
 		// Using StoreRoutes.java > RetrieveRoutes()
-		routes = getFakeRoutes();
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		routes = retrieveRoutes(preferences);
          
 		list = (ListView) findViewById(R.id.listView1);
 		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -35,6 +42,7 @@ public class RoutesActivity extends Activity {
 				Intent intent = new Intent(getApplicationContext(),
 						RunsActivity.class);
 				intent.putExtra("route", routes.get(pos));
+				intent.putExtra("routePosition", pos);
 				startActivity(intent);
 			}
 		});
@@ -42,6 +50,20 @@ public class RoutesActivity extends Activity {
         list.setAdapter(adapter);
     }
      
+	// This method should go into LocalStorageUtils.java
+	public static List<Route> retrieveRoutes(SharedPreferences sharedPreferences) {
+		String json = sharedPreferences.getString("routes", null);
+		Type type = new TypeToken<List<Route>>() {
+		}.getType();
+		List<Route> routes = new Gson().fromJson(json, type);
+		if (routes == null) {
+			routes = new ArrayList<Route>();
+		}
+		return routes;
+	}
+
+	// This method should go into LocalStorageUtils.java
+
 	private List<Route> getFakeRoutes() {
 		List<Route> routes = new ArrayList<Route>();
 		// create routes
