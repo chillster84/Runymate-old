@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.widget.TextView;
 
 import com.androidplot.xy.LineAndPointFormatter;
@@ -127,6 +129,15 @@ public class ActivityResults extends Activity {
 			return sum.doubleValue() / values.size();
 		}
 		return sum;
+	}
+
+	public void onButtonClick(View v) {
+		if (v.getId() == R.id.buttonGoBack) {
+			Intent intent = new Intent(getApplicationContext(),
+					RouteSelectionActivity.class);
+			startActivity(intent);
+		}
+
 	}
 
 	// ignore these methods they should be moved to the LocalStorageUtil.java
