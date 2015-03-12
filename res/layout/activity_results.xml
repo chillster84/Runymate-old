@@ -56,6 +56,14 @@
             android:layout_marginLeft="10dip"
             android:text="unknown" >
         </TextView>
+
+        <Button
+            android:id="@+id/buttonGoBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onButtonClick"
+            android:text="Go Back to Routes" />
+
     </LinearLayout>
 
     <LinearLayout

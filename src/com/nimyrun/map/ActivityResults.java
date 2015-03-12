@@ -1,17 +1,32 @@
 package com.nimyrun.map;
 
-import android.app.Activity;
-//import android.graphics.Color;
-import android.os.Bundle;
-import android.widget.TextView;
-//import android.view.WindowManager;
-import com.androidplot.xy.*;
-
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.TextView;
+
+import com.androidplot.xy.LineAndPointFormatter;
+import com.androidplot.xy.PointLabelFormatter;
+import com.androidplot.xy.SimpleXYSeries;
+import com.androidplot.xy.XYPlot;
+import com.androidplot.xy.XYSeries;
+import com.androidplot.xy.XYStepMode;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+//import android.graphics.Color;
+//import android.view.WindowManager;
+//import java.util.Arrays;
+//import java.util.Collections;
 
 /**
  * A straightforward example of using AndroidPlot to plot some data.
@@ -23,6 +38,21 @@ public class ActivityResults extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+
+		Bundle b = getIntent().getExtras();
+		Run run = (Run) b.getParcelable("run");
+		boolean isNewRoute = (boolean) b.getBoolean("isNewRoute");
+
+		if (isNewRoute) {
+			addNewRouteFromRun(preferences, run);
+		} else {
+			int routePosition = (int) b.getInt("routePosition");
+			addRunToRoute(preferences, run, routePosition);
+		}
+
+		// blah
 
 		// fun little snippet that prevents users from taking screenshots
 		// on ICS+ devices :-)
@@ -100,4 +130,149 @@ public class ActivityResults extends Activity {
 		}
 		return sum;
 	}
+
+	public void onButtonClick(View v) {
+		if (v.getId() == R.id.buttonGoBack) {
+			Intent intent = new Intent(getApplicationContext(),
+					RouteSelectionActivity.class);
+			startActivity(intent);
+		}
+
+	}
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	/**
+	 * Using Gson, converts object into a json string, and stores with
+	 * sharedPreferences
+	 * 
+	 * @param sharedPreferences
+	 * @param routes
+	 */
+	public static void storeRoutes(SharedPreferences sharedPreferences,
+			List<Route> routes) {
+		Editor editor = sharedPreferences.edit();
+		String json = new Gson().toJson(routes);
+		editor.putString("routes", json);
+		editor.commit();
+	}
+
+	public static void addRunToRoute(SharedPreferences sharedPreferences,
+			Run run, int routePosition) {
+		// get old route list
+		List<Route> routes = retrieveRoutes(sharedPreferences);
+
+		// get the route to be updated
+		Route route = routes.get(routePosition);
+
+		// add run the the route
+		route.addRun(run);
+
+		// update route in the position
+		routes.set(routePosition, route);
+
+		// store updated list of routes
+		storeRoutes(sharedPreferences, routes);
+	}
+
+	public static void addNewRouteFromRun(SharedPreferences sharedPreferences,
+			Run run) {
+		// create route from run
+		Route route = new Route("blah");
+		route.addRun(run);
+		for (RunMetric runMetric : run.getRunMetrics()) {
+			LatLng point = runMetric.getLatlng();
+			route.addPoint(point.latitude, point.longitude);
+		}
+
+		// get old route list
+		List<Route> routes = retrieveRoutes(sharedPreferences);
+
+		// add new route to route list
+		routes.add(route);
+
+		// store updated list of routes
+		storeRoutes(sharedPreferences, routes);
+	}
+
+	/**
+	 * Retrieve json string from sharedPreferences, and using Gson converts the
+	 * json string back to object
+	 * 
+	 * @param sharedPreferences
+	 * @return
+	 */
+	public static List<Route> retrieveRoutes(SharedPreferences sharedPreferences) {
+		String json = sharedPreferences.getString("routes", null);
+		Type type = new TypeToken<List<Route>>() {
+		}.getType();
+		List<Route> routes = new Gson().fromJson(json, type);
+		if (routes == null) {
+			routes = new ArrayList<Route>();
+		}
+		return routes;
+	}
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
+	// ignore these methods they should be moved to the LocalStorageUtil.java
+	// class
+
 }
