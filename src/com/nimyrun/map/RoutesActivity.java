@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -50,7 +51,7 @@ public class RoutesActivity extends Activity {
         list.setAdapter(adapter);
     }
      
-	// This method should go into LocalStorageUtils.java
+	// This methods should go into LocalStorageUtils.java
 	public static List<Route> retrieveRoutes(SharedPreferences sharedPreferences) {
 		String json = sharedPreferences.getString("routes", null);
 		Type type = new TypeToken<List<Route>>() {
@@ -58,13 +59,25 @@ public class RoutesActivity extends Activity {
 		List<Route> routes = new Gson().fromJson(json, type);
 		if (routes == null) {
 			routes = new ArrayList<Route>();
+
+			// add/store fake routes if no routes present
+			routes.addAll(getFakeRoutes());
+			storeRoutes(sharedPreferences, routes);
 		}
 		return routes;
 	}
 
-	// This method should go into LocalStorageUtils.java
+	public static void storeRoutes(SharedPreferences sharedPreferences,
+			List<Route> routes) {
+		Editor editor = sharedPreferences.edit();
+		String json = new Gson().toJson(routes);
+		editor.putString("routes", json);
+		editor.commit();
+	}
 
-	private List<Route> getFakeRoutes() {
+	// This methods should go into LocalStorageUtils.java
+
+	private static List<Route> getFakeRoutes() {
 		List<Route> routes = new ArrayList<Route>();
 		// create routes
 		Route routeA = new Route("Route A");
@@ -106,7 +119,7 @@ public class RoutesActivity extends Activity {
 		return routes;
 	}
 
-	private List<Run> getMockRuns(int n) {
+	private static List<Run> getMockRuns(int n) {
 		List<Run> runs = new ArrayList<Run>();
 
 		// add n runs
@@ -117,7 +130,7 @@ public class RoutesActivity extends Activity {
 		return runs;
 	}
 
-	private Run mockRun() {
+	private static Run mockRun() {
 		Route routeA = new Route("Route A");
 
 		// add points
