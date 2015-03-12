@@ -346,17 +346,27 @@ public class MainActivity extends Activity implements LocationListener {
 		count++;
 
 		if (speed < 15) { // Fastest recorded running speed is about 12 m/s
-			runMetrics.add(new RunMetric(new LatLng(location.getLatitude(),
-					location.getLongitude()), speed, heartbeat, System
-					.currentTimeMillis()));
+			addRunMetric(heartbeat);
+
 			speedMap.put(count + "", speed);
 			heartMap.put(count + "", heartbeat);
+
 		}
 		
 		Toast.makeText(this, "SAMPLED! Speed = " + speed,
 				Toast.LENGTH_SHORT).show();
 	}
 	
+	private void addRunMetric(double currentHeartRate) {
+		LatLng currentPosition = new LatLng(location.getLatitude(),
+				location.getLongitude());
+		double currentTimestamp = System.currentTimeMillis();
+		double currentSpeed = speed;
+		RunMetric newRunMetric = new RunMetric(currentPosition, currentSpeed,
+				currentHeartRate, currentTimestamp);
+		runMetrics.add(newRunMetric);
+	}
+
 	private void updateLocation() {		
 		double newDistance = 0;
 		
