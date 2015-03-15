@@ -53,11 +53,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dip" >
 
-        <ImageView
-            android:id="@+id/speedImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@drawable/bg_speed" />
+        
 
         <ImageView
             android:id="@+id/speedBlockerImage"
@@ -74,7 +70,7 @@
             android:text="0.0"
             android:textColor="#eeeeee"
             android:textSize="56dip" >
-        </TextView>
+        <ImageView android:id="@+id/speedImage" android:layout_width="match_parent" android:layout_height="wrap_content" android:src="@drawable/bg_speed" /></TextView>
 
         <TextView
             android:layout_width="wrap_content"

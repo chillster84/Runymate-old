@@ -176,7 +176,7 @@ public class MainActivity extends Activity implements LocationListener {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		locationManager.removeUpdates(this);
+		//locationManager.removeUpdates(this);
 	}
 
 	/*
@@ -381,6 +381,8 @@ public class MainActivity extends Activity implements LocationListener {
 	private void updateLocation() {		
 		double newDistance = 0;
 		
+		double accuracy = location.getAccuracy();
+		
 		newLatitude = location.getLatitude();
 		newLongitude = location.getLongitude();
 
@@ -401,7 +403,7 @@ public class MainActivity extends Activity implements LocationListener {
 		setAnimation(speedBlockerImage, speed);
 		setAnimation(heartPeakImage, heartbeat);
 		
-		if (speed < 15) { // If latest detected location makes sense
+		if (speed < 15 && accuracy < 15) { // If latest detected location makes sense
 			distance = distance + newDistance;
 			
 			try {

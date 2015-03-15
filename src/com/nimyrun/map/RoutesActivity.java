@@ -11,14 +11,37 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+// CAROUSEL
+////////////////////////////////////////////////////
+import android.content.res.TypedArray;
+import android.util.DisplayMetrics;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+////////////////////////////////////////////////////
+
 public class RoutesActivity extends Activity {
+	
+	// CAROUSEL
+	/////////////////////////////////////////////	
+	/**
+     * Define the number of items visible when the carousel is first shown.
+     */
+    private static final float INITIAL_ITEMS_COUNT = 3.5F;
+
+    /**
+     * Carousel container layout
+     */
+    private LinearLayout mCarouselContainer;
+	/////////////////////////////////////////////
 
 	ListView list;
 	RoutesImageAdapter adapter;
@@ -28,6 +51,12 @@ public class RoutesActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_routes);
+		
+		// CAROUSEL
+		////////////////////////////////////////////////////
+        // Get reference to carousel container
+        mCarouselContainer = (LinearLayout) findViewById(R.id.carousel);
+		////////////////////////////////////////////////////
 
 		// This is the main location of routes
 		// This should get loaded from device storage
@@ -161,4 +190,71 @@ public class RoutesActivity extends Activity {
         list.setAdapter(null);
         super.onDestroy();
     }
+	
+	//CAROUSEL
+	//////////////////////////////////////////
+	@Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        // Compute the width of a carousel item based on the screen width and number of initial items.
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        final int imageWidth = (int) (displayMetrics.widthPixels / INITIAL_ITEMS_COUNT);
+
+        // Get the array of puppy resources
+        final TypedArray puppyResourcesTypedArray = getResources().obtainTypedArray(R.array.puppies_array);
+
+        // Populate the carousel with items
+        ImageView imageItem;
+        for (int i = 0; i < puppyResourcesTypedArray.length(); ++i) {
+            // Create new ImageView
+            imageItem = new ImageView(this);
+            
+            imageItem.setId(i);
+
+            // Set the shadow background
+            //imageItem.setBackgroundResource(R.drawable.shadow);
+
+            // Set the image view resource
+            imageItem.setImageResource(puppyResourcesTypedArray.getResourceId(i, -1));
+
+            // Set the size of the image view to the previously computed value
+            imageItem.setLayoutParams(new LinearLayout.LayoutParams(imageWidth, imageWidth));
+
+            /// Add image view to the carousel container
+            mCarouselContainer.addView(imageItem);
+            
+            mCarouselContainer.getChildAt(i).setOnClickListener(btn_click);
+        }
+    }
+	/////////////////////////////////
+	
+	private ImageView routeImageZoom;
+
+	OnClickListener btn_click = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			//final DisplayMetrics displayMetrics = new DisplayMetrics();
+	        //getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+	        //final int imageWidth = (int) (displayMetrics.widthPixels / INITIAL_ITEMS_COUNT);
+	        
+			//int[] loc = {0, 0};
+			
+			routeImageZoom = (ImageView) findViewById(R.id.routeImageZoom);
+			TypedArray puppyResourcesTypedArray = getResources().obtainTypedArray(R.array.puppies_array);
+			routeImageZoom.setImageResource(puppyResourcesTypedArray.getResourceId(v.getId(), -1));
+			for (int i = 0; i < puppyResourcesTypedArray.length(); ++i) {
+				mCarouselContainer.getChildAt(i).setPadding(0, 0, 0, 0);
+			}
+			v.setPadding(15, 15, 15, 15);
+			v.setBackgroundColor(getResources().getColor(R.color.teal));
+			//v.getLocationOnScreen(loc);
+			//mCarouselContainer.setScrollX(halfScreenWidth - loc[0]);
+			//mCarouselContainer.offsetLeftAndRight(imageWidth * v.getId());
+			//mCarouselContainer.setScrollX(imageWidth * v.getId());
+			Toast.makeText(getApplicationContext(),
+					"ID: " + v.getId(), Toast.LENGTH_SHORT).show();
+		}
+	};
 }

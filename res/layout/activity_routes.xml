@@ -2,8 +2,109 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
- 
+    android:orientation="vertical"
+    android:background="#272727" >
+
+    <!-- Container view to scroll horizontally which gives the carousel effect -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none" >
+
+        <!-- Carousel items container - lays out items horizontally -->
+        <LinearLayout
+            android:id="@+id/carousel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        </LinearLayout>
+    </HorizontalScrollView>
+    
+    <LinearLayout
+        android:id="@+id/routeDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+	    <ImageView
+	        android:id="@+id/routeImageZoom"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" />
+
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingLeft="@dimen/activity_horizontal_margin" >
+
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text="Route name" >
+		    </TextView>
+		    <TextView
+		        android:id="@+id/routeName"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text="" >
+		    </TextView>
+	    </LinearLayout>
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingLeft="@dimen/activity_horizontal_margin" >
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text="Distance:" >
+		    </TextView>
+		    <TextView
+		        android:id="@+id/routeDistance"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text="" >
+		    </TextView>
+	    </LinearLayout>
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingLeft="@dimen/activity_horizontal_margin" >
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text="Best time:" >
+		    </TextView>
+		    <TextView
+		        android:id="@+id/routetime"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text="" >
+		    </TextView>
+	    </LinearLayout>
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingLeft="@dimen/activity_horizontal_margin" >
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text="Avg heart rate (best run):" >
+		    </TextView>
+		    <TextView
+		        android:id="@+id/routeHeart"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text="" >
+		    </TextView>
+	    </LinearLayout>
+	</LinearLayout>
+	
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
@@ -15,5 +116,5 @@
         android:listSelector="@android:color/transparent"
         android:padding="10dp" >
     </ListView>
- 
+
 </LinearLayout>
