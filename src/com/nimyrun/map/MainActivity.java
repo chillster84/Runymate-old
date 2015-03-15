@@ -75,6 +75,10 @@ public class MainActivity extends Activity implements LocationListener {
 	private HashMap<String, Double> heartMap = new HashMap<String, Double>();
 	private List<RunMetric> runMetrics = new ArrayList<RunMetric>();
 
+	// new route or existing route?
+	private boolean isNewRoute;
+	private int routePosition;
+
 	// Horizontal offset of speed animation graphic from previous speed
 	// measurement.
 	private int previousSpeedAnimationXOffset = 0;
@@ -94,6 +98,13 @@ public class MainActivity extends Activity implements LocationListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		// Get info from caller
+		Bundle b = getIntent().getExtras();
+		isNewRoute = (boolean) b.getBoolean("isNewRoute");
+		if (!isNewRoute) {
+			routePosition = (int) b.getInt("routePosition");
+		}
 
 		// Assign views to variables
 		latitudeField = (TextView) findViewById(R.id.TextView02);
