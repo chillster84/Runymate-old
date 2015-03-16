@@ -9,5 +9,7 @@
     <string name="title_activity_runs">RunsActivity</string>
     <string name="title_activity_run_metrics">RunMetricsActivity</string>
     <string name="title_activity_route_selection">RouteSelectionActivity</string>
+    <string name="pattern_msg">Does this pattern match your Nymi?</string>
+    <string name="newRun">New Run</string>
 
 </resources>

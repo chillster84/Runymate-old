@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,12 +45,24 @@ public class RoutesActivity extends Activity {
 	List<Route> routes;
 	public ImageLoader imageLoader;
 
+	protected int nymiHandle;
+	boolean validated = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_routes);
+		
+		Intent iin= getIntent();
+        Bundle b = iin.getExtras();
+
+        if(b!=null)
+        {
+            nymiHandle = b.getInt("nymiHandle");
+            validated = b.getBoolean("validated");
+            LoginScreen.appendLog("onCreate", "nymiHandle passed over to routesactivity is " + nymiHandle);
+        }
 		
 		// CAROUSEL
 		////////////////////////////////////////////////////
@@ -64,6 +77,7 @@ public class RoutesActivity extends Activity {
 				.getDefaultSharedPreferences(getApplicationContext());
 		routes = retrieveRoutes(preferences);
 
+         
     }
      
 	// This methods should go into LocalStorageUtils.java
@@ -265,6 +279,8 @@ public class RoutesActivity extends Activity {
 							RunsActivity.class);
 					intent.putExtra("route", routes.get(pos));
 					intent.putExtra("routePosition", pos);
+					intent.putExtra("validated", validated);
+					intent.putExtra("nymiHandle", nymiHandle);
 					startActivity(intent);
 				}
 			});

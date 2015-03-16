@@ -9,7 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onButtonClick"
-        android:text="New Run" />
+        android:text="@string/newRun"
+        android:visibility="invisible" />
     
     <ListView
         android:id="@+id/listView2"
