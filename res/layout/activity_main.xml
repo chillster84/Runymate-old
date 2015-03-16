@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dip" >
+        android:layout_marginTop="20dp" >
 
         <ImageView
             android:id="@+id/heartFlatImage"
@@ -21,7 +21,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="20dip"
+            android:layout_marginLeft="20dp"
             android:background="#272727"
             android:src="@drawable/bg_heart_peak" />
 
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dip"
+            android:layout_marginRight="20dp"
             android:text="0"
             android:textColor="#eeeeee"
             android:textSize="56dip" >
@@ -40,20 +40,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dip"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="58dip"
             android:text="bpm"
             android:textColor="#eeeeee"
-            android:textSize="20dip" >
+            android:textSize="20dp" >
         </TextView>
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dip" >
+        android:layout_marginTop="20dp" >
 
-        
+        <ImageView
+            android:id="@+id/speedImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/bg_speed" />
 
         <ImageView
             android:id="@+id/speedBlockerImage"
@@ -66,24 +70,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dip"
+            android:layout_marginRight="20dp"
             android:text="0.0"
             android:textColor="#eeeeee"
             android:textSize="56dip" >
-        <ImageView android:id="@+id/speedImage" android:layout_width="match_parent" android:layout_height="wrap_content" android:src="@drawable/bg_speed" /></TextView>
+        </TextView>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="20dip"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="58dip"
             android:text="m/s"
             android:textColor="#eeeeee"
-            android:textSize="20dip" >
+            android:textSize="20dp" >
         </TextView>
     </RelativeLayout>
 
+    <!-- DEBUG MESSAGES
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
@@ -173,32 +178,39 @@
             android:text="unknown" >
         </TextView>
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/button01"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onButtonClick"
-            android:text="Finished Run" >
-        </Button>
-
-    </LinearLayout>
-
+	-->
+	
+	
+	
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dip" >
+        android:layout_marginTop="20dp"
+        android:orientation="vertical" >
 
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.MapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="8" />
+        
+        <LinearLayout
+        android:id="@+id/linearLayout6"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+	        <Button
+	            android:id="@+id/button01"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:onClick="onButtonClick"
+	            android:text="Finish"
+	            android:background="@color/teal"
+	            style="?android:attr/borderlessButtonStyle" >
+	        </Button>
+	    </LinearLayout>
+	    
     </LinearLayout>
 
 </LinearLayout>

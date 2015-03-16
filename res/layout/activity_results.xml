@@ -2,134 +2,165 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="3" >
-
+    android:orientation="vertical" >
+    
     <LinearLayout
         android:id="@+id/topContainer"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:orientation="vertical" >
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical"
+        android:layout_weight="20" >
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:text="Distance: " >
-        </TextView>
+            android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/distance"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:text="Distance: " >
+            </TextView>
+
+            <TextView
+                android:id="@+id/distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="unknown" >
+            </TextView>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:text="unknown" >
-        </TextView>
+            android:orientation="horizontal" >
 
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:text="Time: " >
+            </TextView>
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="unknown" >
+            </TextView>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:text="Time: " >
-        </TextView>
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:orientation="horizontal" >
 
-        <TextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:text="unknown" >
-        </TextView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:text="Average heart rate: " >
+            </TextView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:text="Average heart rate: " >
-        </TextView>
+            <TextView
+                android:id="@+id/heart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="unknown" >
+            </TextView>
+        </LinearLayout>
 
-        <TextView
-            android:id="@+id/heart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dip"
-            android:text="unknown" >
-        </TextView>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:weightSum="2" >
+
+            <LinearLayout
+                android:id="@+id/speedPlotContainer"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+
+                <com.androidplot.xy.XYPlot
+                    android:id="@+id/speedPlot"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    androidPlot.domainLabel="Time (s)"
+                    androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
+                    androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+                    androidPlot.graphWidget.domainOriginLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+                    androidPlot.graphWidget.gridLinePaint.color="#000000"
+                    androidPlot.graphWidget.marginBottom="30dp"
+                    androidPlot.graphWidget.marginLeft="20dp"
+                    androidPlot.graphWidget.marginRight="10dp"
+                    androidPlot.graphWidget.marginTop="25dp"
+                    androidPlot.graphWidget.rangeLabelPaint.textSize="@dimen/range_tick_label_font_size"
+                    androidPlot.graphWidget.rangeOriginLabelPaint.textSize="@dimen/range_tick_label_font_size"
+                    androidPlot.legendWidget.heightMetric.value="25dp"
+                    androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
+                    androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
+                    androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
+                    androidPlot.legendWidget.textPaint.textSize="@dimen/legend_text_font_size"
+                    androidPlot.rangeLabel="Speed (m/s)"
+                    androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
+                    androidPlot.title="Speed"
+                    androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/heartPlotContainer"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+
+                <com.androidplot.xy.XYPlot
+                    android:id="@+id/heartPlot"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    androidPlot.domainLabel="Time (s)"
+                    androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
+                    androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+                    androidPlot.graphWidget.domainOriginLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+                    androidPlot.graphWidget.gridLinePaint.color="#000000"
+                    androidPlot.graphWidget.marginBottom="25dp"
+                    androidPlot.graphWidget.marginLeft="15dp"
+                    androidPlot.graphWidget.marginRight="10dp"
+                    androidPlot.graphWidget.marginTop="20dp"
+                    androidPlot.graphWidget.rangeLabelPaint.textSize="@dimen/range_tick_label_font_size"
+                    androidPlot.graphWidget.rangeOriginLabelPaint.textSize="@dimen/range_tick_label_font_size"
+                    androidPlot.legendWidget.heightMetric.value="25dp"
+                    androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
+                    androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
+                    androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
+                    androidPlot.legendWidget.textPaint.textSize="@dimen/legend_text_font_size"
+                    androidPlot.rangeLabel="Heart Rate (bpm)"
+                    androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
+                    androidPlot.title="Heart Rate"
+                    androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1" >
 
         <Button
             android:id="@+id/buttonGoBack"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:onClick="onButtonClick"
-            android:text="Go Back to Routes" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/speedPlotContainer"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal" >
-
-        <com.androidplot.xy.XYPlot
-            android:id="@+id/speedPlot"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            androidPlot.domainLabel="Time (s)"
-            androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
-            androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
-            androidPlot.graphWidget.domainOriginLabelPaint.textSize="@dimen/domain_tick_label_font_size"
-            androidPlot.graphWidget.gridLinePaint.color="#000000"
-            androidPlot.graphWidget.marginBottom="25dp"
-            androidPlot.graphWidget.marginLeft="15dp"
-            androidPlot.graphWidget.marginRight="10dp"
-            androidPlot.graphWidget.marginTop="20dp"
-            androidPlot.graphWidget.rangeLabelPaint.textSize="@dimen/range_tick_label_font_size"
-            androidPlot.graphWidget.rangeOriginLabelPaint.textSize="@dimen/range_tick_label_font_size"
-            androidPlot.legendWidget.heightMetric.value="25dp"
-            androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
-            androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
-            androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
-            androidPlot.legendWidget.textPaint.textSize="@dimen/legend_text_font_size"
-            androidPlot.rangeLabel="Speed (m/s)"
-            androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
-            androidPlot.title="Speed"
-            androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/heartPlotContainer"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:orientation="horizontal" >
-
-        <com.androidplot.xy.XYPlot
-            android:id="@+id/heartPlot"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            androidPlot.domainLabel="Time (s)"
-            androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
-            androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
-            androidPlot.graphWidget.domainOriginLabelPaint.textSize="@dimen/domain_tick_label_font_size"
-            androidPlot.graphWidget.gridLinePaint.color="#000000"
-            androidPlot.graphWidget.marginBottom="25dp"
-            androidPlot.graphWidget.marginLeft="15dp"
-            androidPlot.graphWidget.marginRight="10dp"
-            androidPlot.graphWidget.marginTop="20dp"
-            androidPlot.graphWidget.rangeLabelPaint.textSize="@dimen/range_tick_label_font_size"
-            androidPlot.graphWidget.rangeOriginLabelPaint.textSize="@dimen/range_tick_label_font_size"
-            androidPlot.legendWidget.heightMetric.value="25dp"
-            androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
-            androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
-            androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
-            androidPlot.legendWidget.textPaint.textSize="@dimen/legend_text_font_size"
-            androidPlot.rangeLabel="Heart Rate (bpm)"
-            androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
-            androidPlot.title="Heart Rate"
-            androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size" />
+            android:text="Return to routes"
+            android:background="@color/teal"
+	        style="?android:attr/borderlessButtonStyle" />
     </LinearLayout>
 
 </LinearLayout>

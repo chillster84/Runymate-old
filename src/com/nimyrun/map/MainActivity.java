@@ -40,10 +40,10 @@ public class MainActivity extends Activity implements LocationListener {
 	private final static int SAMPLING_INTERVAL = 5;
 	private final static int ZOOM_LEVEL = 18; // on a scale of 1 - 22
 
-	private TextView latitudeField;
-	private TextView longitudeField;
-	private TextView prevLatitudeField;
-	private TextView prevLongitudeField;
+	//private TextView latitudeField;
+	//private TextView longitudeField;
+	//private TextView prevLatitudeField;
+	//private TextView prevLongitudeField;
 	private TextView speedField;
 	private ImageView speedImage;
 	private ImageView speedBlockerImage;
@@ -96,10 +96,13 @@ public class MainActivity extends Activity implements LocationListener {
 		setContentView(R.layout.activity_main);
 
 		// Assign views to variables
-		latitudeField = (TextView) findViewById(R.id.TextView02);
-		longitudeField = (TextView) findViewById(R.id.TextView04);
-		prevLatitudeField = (TextView) findViewById(R.id.TextView06);
-		prevLongitudeField = (TextView) findViewById(R.id.TextView08);
+		
+		// DEBUG MESSAGES
+		//latitudeField = (TextView) findViewById(R.id.TextView02);
+		//longitudeField = (TextView) findViewById(R.id.TextView04);
+		//prevLatitudeField = (TextView) findViewById(R.id.TextView06);
+		//prevLongitudeField = (TextView) findViewById(R.id.TextView08);
+		
 		speedField = (TextView) findViewById(R.id.speedValue);
 		speedImage = (ImageView) findViewById(R.id.speedImage);
 		speedBlockerImage = (ImageView) findViewById(R.id.speedBlockerImage);
@@ -142,8 +145,8 @@ public class MainActivity extends Activity implements LocationListener {
 			
 			setTimer(SAMPLING_INTERVAL, 5);
 		} else {
-			latitudeField.setText("Location not available.");
-			longitudeField.setText("Location not available.");
+			//latitudeField.setText("Location not available.");
+			//longitudeField.setText("Location not available.");
 		}
 	}
 
@@ -375,10 +378,10 @@ public class MainActivity extends Activity implements LocationListener {
 		newLatitude = location.getLatitude();
 		newLongitude = location.getLongitude();
 
-		prevLatitudeField.setText(String.valueOf(latitude));
-		prevLongitudeField.setText(String.valueOf(longitude));
-		latitudeField.setText(String.valueOf(newLatitude));
-		longitudeField.setText(String.valueOf(newLongitude));
+		//prevLatitudeField.setText(String.valueOf(latitude));
+		//prevLongitudeField.setText(String.valueOf(longitude));
+		//latitudeField.setText(String.valueOf(newLatitude));
+		//longitudeField.setText(String.valueOf(newLongitude));
 		
 		newDistance = getDistance(latitude, longitude, newLatitude,
 				newLongitude);
@@ -392,7 +395,7 @@ public class MainActivity extends Activity implements LocationListener {
 		setAnimation(speedBlockerImage, speed);
 		setAnimation(heartPeakImage, heartbeat);
 		
-		if (speed < 15 && accuracy < 15) { // If latest detected location makes sense
+		if (speed < 12 && accuracy < 15) { // If latest detected location makes sense
 			distance = distance + newDistance;
 			
 			try {

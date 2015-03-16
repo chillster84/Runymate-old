@@ -116,8 +116,9 @@ public class ActivityResults extends Activity {
 			
 			// Reduce the number of range labels
 			plot.setTicksPerRangeLabel(3);
-			plot.getGraphWidget().setDomainLabelOrientation(-45);
+			plot.getGraphWidget().setDomainLabelOrientation(0); // Default is -45
 			plot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
+			plot.getLegendWidget().setVisible(false);
 	}
 
 	private double getListAverage(List<Double> values) {

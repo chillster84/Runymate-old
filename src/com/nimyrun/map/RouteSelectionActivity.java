@@ -14,8 +14,6 @@ public class RouteSelectionActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_route_selection);
-		Toast.makeText(getApplicationContext(),
-				"onCreate in RouteSelectionActivity.java!", Toast.LENGTH_SHORT).show();
 	}
 
 	/*
