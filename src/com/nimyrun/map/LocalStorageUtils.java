@@ -99,4 +99,10 @@ public final class LocalStorageUtils {
 		List<Route> routes = new Gson().fromJson(json, type);
 		return routes;
 	}
+
+	public static Route retrieveRoute(SharedPreferences sharedPreferences,
+			int routePosition) {
+		List<Route> routes = retrieveRoutes(sharedPreferences);
+		return routes.get(routePosition);
+	}
 }

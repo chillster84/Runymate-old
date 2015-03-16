@@ -1,5 +1,6 @@
 package com.nimyrun.map;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,6 +18,7 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -28,8 +31,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 //import android.widget.FrameLayout;
 //import java.util.ArrayList;
 //import com.google.android.gms.maps.CameraUpdate;
@@ -75,6 +81,10 @@ public class MainActivity extends Activity implements LocationListener {
 	private HashMap<String, Double> heartMap = new HashMap<String, Double>();
 	private List<RunMetric> runMetrics = new ArrayList<RunMetric>();
 
+	// new route or existing route?
+	private boolean isNewRoute;
+	private int routePosition;
+
 	// Horizontal offset of speed animation graphic from previous speed
 	// measurement.
 	private int previousSpeedAnimationXOffset = 0;
@@ -94,6 +104,13 @@ public class MainActivity extends Activity implements LocationListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		// Get info from caller
+		Bundle b = getIntent().getExtras();
+		isNewRoute = (boolean) b.getBoolean("isNewRoute");
+		if (!isNewRoute) {
+			routePosition = (int) b.getInt("routePosition");
+		}
 
 		// Assign views to variables
 		
@@ -116,6 +133,19 @@ public class MainActivity extends Activity implements LocationListener {
 			gMap.setMyLocationEnabled(true);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		// Draw existing route
+		if(!isNewRoute) {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(getApplicationContext());
+			Route route = retrieveRoute(preferences, routePosition);
+			PolylineOptions polylineOptions = new PolylineOptions();
+			for (LatLng point : route.getPath()) {
+				gMap.addMarker(new MarkerOptions().position(point));
+				polylineOptions.add(point);
+			}
+			gMap.addPolyline(polylineOptions);
 		}
 
 		// Get the location manager
@@ -429,4 +459,20 @@ public class MainActivity extends Activity implements LocationListener {
 		}
 		super.onStop();
 	}
+
+	// // put in LocalStorageUtils.java
+	public static List<Route> retrieveRoutes(SharedPreferences sharedPreferences) {
+		String json = sharedPreferences.getString("routes", null);
+		Type type = new TypeToken<List<Route>>() {
+		}.getType();
+		List<Route> routes = new Gson().fromJson(json, type);
+		return routes;
+	}
+
+	public static Route retrieveRoute(SharedPreferences sharedPreferences,
+			int routePosition) {
+		List<Route> routes = retrieveRoutes(sharedPreferences);
+		return routes.get(routePosition);
+	}
+	// // Put in LocalStorateUtils.java
 }

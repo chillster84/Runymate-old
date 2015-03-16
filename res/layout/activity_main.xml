@@ -88,7 +88,8 @@
         </TextView>
     </RelativeLayout>
 
-    <!-- DEBUG MESSAGES
+    <!--
+    DEBUG MESSAGES
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
@@ -177,11 +178,9 @@
             android:layout_height="wrap_content"
             android:text="unknown" >
         </TextView>
-    </LinearLayout>
-	-->
-	
-	
-	
+    </LinearLayout>
+    -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -194,23 +193,23 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="8" />
-        
+
         <LinearLayout
-        android:id="@+id/linearLayout6"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" >
-	        <Button
-	            android:id="@+id/button01"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:onClick="onButtonClick"
-	            android:text="Finish"
-	            android:background="@color/teal"
-	            style="?android:attr/borderlessButtonStyle" >
-	        </Button>
-	    </LinearLayout>
-	    
+            android:id="@+id/linearLayout6"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" >
+
+            <Button
+                android:id="@+id/button01"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/teal"
+                android:onClick="onButtonClick"
+                android:text="Finish" >
+            </Button>
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

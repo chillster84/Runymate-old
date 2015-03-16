@@ -12,6 +12,7 @@ public class RunsActivity extends Activity {
 	ListView list;
 	RunsAdapter adapter;
 	Route route;
+	int routePosition;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -19,10 +20,11 @@ public class RunsActivity extends Activity {
 
 		Bundle b = getIntent().getExtras();
 		route = (Route) b.getParcelable("route");
+		routePosition = (int) b.getInt("routePosition");
 
-		setContentView(R.layout.activity_routes);
+		setContentView(R.layout.activity_runs);
 
-		list = (ListView) findViewById(R.id.listView1);
+		list = (ListView) findViewById(R.id.listView2);
 		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
@@ -36,4 +38,14 @@ public class RunsActivity extends Activity {
 		list.setAdapter(adapter);
 	}
 
+	public void onButtonClick(View v) {
+		if (v.getId() == R.id.newRun) {
+			Intent intent = new Intent(getApplicationContext(),
+					MainActivity.class);
+			intent.putExtra("isNewRoute", false);
+			intent.putExtra("routePosition", routePosition);
+			startActivity(intent);
+		}
+
+	}
 }

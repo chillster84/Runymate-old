@@ -23,6 +23,7 @@ public class RouteSelectionActivity extends Activity {
 		if (v.getId() == R.id.button1) {
 			Intent intent = new Intent(getApplicationContext(),
 					MainActivity.class);
+			intent.putExtra("isNewRoute", true);
 			startActivity(intent);
 		}
 		if (v.getId() == R.id.button2) {
