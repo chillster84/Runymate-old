@@ -46,11 +46,23 @@ public class RoutesActivity extends Activity {
 	ListView list;
 	RoutesImageAdapter adapter;
 	List<Route> routes;
+	protected int nymiHandle;
+	boolean validated = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_routes);
+		
+		Intent iin= getIntent();
+        Bundle b = iin.getExtras();
+
+        if(b!=null)
+        {
+            nymiHandle = b.getInt("nymiHandle");
+            validated = b.getBoolean("validated");
+            LoginScreen.appendLog("onCreate", "nymiHandle passed over to routesactivity is " + nymiHandle);
+        }
 		
 		// CAROUSEL
 		////////////////////////////////////////////////////
@@ -73,6 +85,8 @@ public class RoutesActivity extends Activity {
 						RunsActivity.class);
 				intent.putExtra("route", routes.get(pos));
 				intent.putExtra("routePosition", pos);
+				intent.putExtra("validated", validated);
+				intent.putExtra("nymiHandle", nymiHandle);
 				startActivity(intent);
 			}
 		});
