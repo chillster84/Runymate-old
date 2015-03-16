@@ -4,28 +4,26 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 // CAROUSEL
 ////////////////////////////////////////////////////
-import android.content.res.TypedArray;
-import android.util.DisplayMetrics;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 ////////////////////////////////////////////////////
 
 public class RoutesActivity extends Activity {
@@ -43,14 +41,16 @@ public class RoutesActivity extends Activity {
     private LinearLayout mCarouselContainer;
 	/////////////////////////////////////////////
 
-	ListView list;
 	RoutesImageAdapter adapter;
 	List<Route> routes;
+	public ImageLoader imageLoader;
+
 	protected int nymiHandle;
 	boolean validated = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_routes);
 		
@@ -76,22 +76,8 @@ public class RoutesActivity extends Activity {
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
 		routes = retrieveRoutes(preferences);
+
          
-		list = (ListView) findViewById(R.id.listView1);
-		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> av, View v, int pos, long id) {
-				Intent intent = new Intent(getApplicationContext(),
-						RunsActivity.class);
-				intent.putExtra("route", routes.get(pos));
-				intent.putExtra("routePosition", pos);
-				intent.putExtra("validated", validated);
-				intent.putExtra("nymiHandle", nymiHandle);
-				startActivity(intent);
-			}
-		});
-		adapter = new RoutesImageAdapter(this, routes);
-        list.setAdapter(adapter);
     }
      
 	// This methods should go into LocalStorageUtils.java
@@ -197,13 +183,6 @@ public class RoutesActivity extends Activity {
 
 		return run;
 	}
-
-	@Override
-    public void onDestroy()
-    {
-        list.setAdapter(null);
-        super.onDestroy();
-    }
 	
 	//CAROUSEL
 	//////////////////////////////////////////
@@ -211,30 +190,38 @@ public class RoutesActivity extends Activity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
+		imageLoader = new ImageLoader(getApplicationContext());
+
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		routes = retrieveRoutes(preferences);
+
         // Compute the width of a carousel item based on the screen width and number of initial items.
         final DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         final int imageWidth = (int) (displayMetrics.widthPixels / INITIAL_ITEMS_COUNT);
 
-        // Get the array of puppy resources
-        final TypedArray puppyResourcesTypedArray = getResources().obtainTypedArray(R.array.puppies_array);
-
         // Populate the carousel with items
         ImageView imageItem;
-        for (int i = 0; i < puppyResourcesTypedArray.length(); ++i) {
+		for (int i = 0; i < routes.size(); i++) {
+
             // Create new ImageView
             imageItem = new ImageView(this);
             
-            imageItem.setId(i);
+			String imageUrl = getRouteUrl(routes.get(i));
+
+			imageLoader.DisplayImage(imageUrl, imageItem, i);
 
             // Set the shadow background
             //imageItem.setBackgroundResource(R.drawable.shadow);
 
             // Set the image view resource
-            imageItem.setImageResource(puppyResourcesTypedArray.getResourceId(i, -1));
+			// int image = puppyResourcesTypedArray.getResourceId(i, -1);
+			// imageItem.setImageResource(image);
 
             // Set the size of the image view to the previously computed value
-            imageItem.setLayoutParams(new LinearLayout.LayoutParams(imageWidth, imageWidth));
+			// imageItem.setLayoutParams(new
+			// LinearLayout.LayoutParams(imageWidth, imageWidth));
 
             /// Add image view to the carousel container
             mCarouselContainer.addView(imageItem);
@@ -245,6 +232,7 @@ public class RoutesActivity extends Activity {
 	/////////////////////////////////
 	
 	private ImageView routeImageZoom;
+	int pos;
 
 	OnClickListener btn_click = new OnClickListener() {
 		@Override
@@ -252,17 +240,50 @@ public class RoutesActivity extends Activity {
 			//final DisplayMetrics displayMetrics = new DisplayMetrics();
 	        //getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 	        //final int imageWidth = (int) (displayMetrics.widthPixels / INITIAL_ITEMS_COUNT);
-	        
+
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(getApplicationContext());
+			routes = retrieveRoutes(preferences);
+			pos = v.getId();
+
+			Route route = routes.get(pos);
 			//int[] loc = {0, 0};
 			
 			routeImageZoom = (ImageView) findViewById(R.id.routeImageZoom);
-			TypedArray puppyResourcesTypedArray = getResources().obtainTypedArray(R.array.puppies_array);
-			routeImageZoom.setImageResource(puppyResourcesTypedArray.getResourceId(v.getId(), -1));
-			for (int i = 0; i < puppyResourcesTypedArray.length(); ++i) {
+			TextView routeName = (TextView) findViewById(R.id.routeName);
+			TextView routeDistance = (TextView) findViewById(R.id.routeDistance);
+			TextView routeTime = (TextView) findViewById(R.id.routeTime);
+			TextView routeHeart = (TextView) findViewById(R.id.routeHeart);
+
+			routeName.setText(route.getName());
+			// we can write a method that gets the average or the best out of
+			// the runs
+			routeDistance.setText("" + route.getRuns().get(0).getDistance());
+			routeTime.setText("" + route.getRuns().get(0).getTime());
+			routeHeart.setText(""
+					+ route.getRuns().get(0).getAverageHeartRate());
+
+			String url = getRouteUrl(route);
+			imageLoader.DisplayImage(url, routeImageZoom);
+
+			for (int i = 0; i < routes.size(); ++i) {
 				mCarouselContainer.getChildAt(i).setPadding(0, 0, 0, 0);
 			}
 			v.setPadding(15, 15, 15, 15);
 			v.setBackgroundColor(getResources().getColor(R.color.teal));
+
+			routeImageZoom.setOnClickListener(new OnClickListener() {
+				// Start new list activity
+				public void onClick(View v) {
+					Intent intent = new Intent(getApplicationContext(),
+							RunsActivity.class);
+					intent.putExtra("route", routes.get(pos));
+					intent.putExtra("routePosition", pos);
+					intent.putExtra("validated", validated);
+					intent.putExtra("nymiHandle", nymiHandle);
+					startActivity(intent);
+				}
+			});
 			//v.getLocationOnScreen(loc);
 			//mCarouselContainer.setScrollX(halfScreenWidth - loc[0]);
 			//mCarouselContainer.offsetLeftAndRight(imageWidth * v.getId());
@@ -271,4 +292,23 @@ public class RoutesActivity extends Activity {
 					"ID: " + v.getId(), Toast.LENGTH_SHORT).show();
 		}
 	};
+
+	public String getRouteUrl(Route route) {
+		String baseUrl = "https://maps.googleapis.com/maps/api/staticmap?path=color:0x0000ff%7Cweight:5%7C";
+		int i = 0;
+		for (LatLng pt : route.getPath()) {
+			if (i == 0) {
+				String point = pt.latitude + "," + pt.longitude;
+				baseUrl += point;
+			} else {
+				String point = "%7C" + pt.latitude + "," + pt.longitude;
+				baseUrl += point;
+			}
+			i++;
+		}
+		baseUrl += "&size=480x280";
+		baseUrl += "&zoom=17";
+		baseUrl += "&key=AIzaSyBlSoG9MOexZBwYnwRQq0QWVGY9a7eDab0";
+		return baseUrl;
+	}
 }

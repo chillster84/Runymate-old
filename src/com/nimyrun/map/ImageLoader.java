@@ -46,6 +46,18 @@ public class ImageLoader {
 		}
 	}
 
+	public void DisplayImage(String url, ImageView imageView, int i) {
+		imageViews.put(imageView, url);
+		imageView.setId(i);
+		Bitmap bitmap = memoryCache.get(url);
+		if (bitmap != null)
+			imageView.setImageBitmap(bitmap);
+		else {
+			queuePhoto(url, imageView);
+			imageView.setImageResource(stub_id);
+		}
+	}
+
 	private void queuePhoto(String url, ImageView imageView) {
 		PhotoToLoad p = new PhotoToLoad(url, imageView);
 		executorService.submit(new PhotosLoader(p));

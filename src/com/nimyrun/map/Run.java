@@ -89,4 +89,14 @@ public class Run implements Parcelable {
 			return new Run[size];
 		}
 	};
+
+	public double getAverageHeartRate() {
+		double avg = 0;
+		int i = 0;
+		for (RunMetric runMetric : runMetrics) {
+			i++;
+			avg = runMetric.getHeartRate() + avg;
+		}
+		return avg / i;
+	}
 }
