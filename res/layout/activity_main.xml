@@ -88,7 +88,7 @@
         </TextView>
     </RelativeLayout>
 
-    <!--
+<!--
     DEBUG MESSAGES
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -178,7 +178,8 @@
             android:layout_height="wrap_content"
             android:text="unknown" >
         </TextView>
-    </LinearLayout>
+    </LinearLayout>
+
     -->
 
     <LinearLayout
