@@ -172,12 +172,12 @@ public class RoutesActivity extends Activity {
 		routeA.addPoint(43.6612275, -79.39416666);
 		routeA.addPoint(43.66151856, -79.39409156);
 
-		Run run = new Run(222.22, 22.2);
+		Run run = new Run(520, 12);
 		int i = 0;
 		for (LatLng point : routeA.getPath()) {
 			i++;
-			run.addRunMetrics(new RunMetric(point, 22.2 + i, 22.2 + i,
-					20150101 + i));
+			run.addRunMetrics(new RunMetric(point, 22.4 + i, 156 + i,
+					0 + i));
 		}
 
 		return run;

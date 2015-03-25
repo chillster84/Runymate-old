@@ -41,7 +41,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textColor="#ffffff"
-		        android:text="Route name" >
+		        android:text="Route name: " >
 		    </TextView>
 		    <TextView
 		        android:id="@+id/routeName"
@@ -59,7 +59,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textColor="#ffffff"
-		        android:text="Distance:" >
+		        android:text="Distance: " >
 		    </TextView>
 		    <TextView
 		        android:id="@+id/routeDistance"
@@ -68,6 +68,12 @@
 		        android:textColor="#ffffff"
 		        android:text="" >
 		    </TextView>
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text=" m" >
+		    </TextView>
 	    </LinearLayout>
 	    <LinearLayout
 	        android:layout_width="match_parent"
@@ -77,7 +83,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textColor="#ffffff"
-		        android:text="Best time:" >
+		        android:text="Best time: " >
 		    </TextView>
 		    <TextView
 		        android:id="@+id/routeTime"
@@ -86,6 +92,12 @@
 		        android:textColor="#ffffff"
 		        android:text="" >
 		    </TextView>
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text=" min" >
+		    </TextView>
 	    </LinearLayout>
 	    <LinearLayout
 	        android:layout_width="match_parent"
@@ -95,7 +107,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textColor="#ffffff"
-		        android:text="Avg heart rate (best run):" >
+		        android:text="Avg heart rate (best run): " >
 		    </TextView>
 		    <TextView
 		        android:id="@+id/routeHeart"
@@ -103,6 +115,12 @@
 		        android:layout_height="wrap_content"
 		        android:textColor="#ffffff"
 		        android:text="" >
+		    </TextView>
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textColor="#ffffff"
+		        android:text=" bpm" >
 		    </TextView>
 	    </LinearLayout>
 	</LinearLayout>

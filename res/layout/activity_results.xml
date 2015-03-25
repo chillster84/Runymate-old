@@ -55,7 +55,6 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:orientation="horizontal" >
 
             <TextView
@@ -70,6 +69,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="unknown" >
+            </TextView>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:text="Steps taken: " >
+            </TextView>
+
+            <TextView
+                android:id="@+id/steps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="928 steps" >
             </TextView>
         </LinearLayout>
 

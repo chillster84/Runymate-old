@@ -68,7 +68,7 @@ public class RunMetricsActivity extends Activity {
 					public boolean onMarkerClick(Marker marker) {
 						RunMetric runMetric = getRunMetric(marker);
 						speed.setText("Speed: " + runMetric.getSpeed() + " m/s");
-						time.setText("Time: " + runMetric.getTimestamp());
+						time.setText("Time: " + runMetric.getTimestamp() + "min");
 						heartRate.setText("Heart rate: "
 								+ runMetric.getHeartRate() + " bpm");
 						if (prevMarker != null) {

@@ -419,7 +419,7 @@ public class MainActivity extends Activity implements LocationListener {
 		speed = newDistance / (LOCATION_MIN_TIME * errorFactor);
 		
 		speedField.setText((double) Math.round(speed * 100) / 100 + "");
-		heartbeat = 50 + (count / 5 * 10);
+		heartbeat = 150 + (count / 5 * 10);
 		heartField.setText(heartbeat + "");
 		
 		setAnimation(speedBlockerImage, speed);
