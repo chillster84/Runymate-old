@@ -224,7 +224,7 @@ public class RoutesActivity extends Activity {
 
             /// Add image view to the carousel container
             mCarouselContainer.addView(imageItem);
-            
+            mCarouselContainer.getChildAt(i).setPadding(15, 15, 15, 15);
             mCarouselContainer.getChildAt(i).setOnClickListener(btn_click);
         }
     }
@@ -266,10 +266,14 @@ public class RoutesActivity extends Activity {
 			imageLoader.DisplayImage(url, routeImageZoom);
 
 			for (int i = 0; i < routes.size(); ++i) {
-				mCarouselContainer.getChildAt(i).setPadding(0, 0, 0, 0);
+				mCarouselContainer.getChildAt(i).setBackgroundColor(getResources().getColor(R.color.transparent));
 			}
-			v.setPadding(15, 15, 15, 15);
+			
 			v.setBackgroundColor(getResources().getColor(R.color.teal));
+			
+			final DisplayMetrics displayMetrics = new DisplayMetrics();
+	        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+			routeImageZoom.getLayoutParams().height = displayMetrics.widthPixels;
 
 			routeImageZoom.setOnClickListener(new OnClickListener() {
 				// Start new list activity
@@ -305,8 +309,8 @@ public class RoutesActivity extends Activity {
 			}
 			i++;
 		}
-		baseUrl += "&size=480x280";
-		baseUrl += "&zoom=17";
+		baseUrl += "&size=1080x1080";
+		baseUrl += "&zoom=18";
 		baseUrl += "&key=AIzaSyBlSoG9MOexZBwYnwRQq0QWVGY9a7eDab0";
 		return baseUrl;
 	}

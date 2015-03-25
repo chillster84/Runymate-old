@@ -44,9 +44,9 @@ public class RunsAdapter extends BaseAdapter {
 		TextView distanceText = (TextView) vi.findViewById(R.id.text3);
 		TextView timeText = (TextView) vi.findViewById(R.id.text4);
 		Run run = runs.get(position);
-		text.setText("Run #" + position+1);
-		distanceText.setText("Distance Travelled: " + run.getDistance() + " m");
-		timeText.setText("Time Taken: " + run.getTime());
+		text.setText(position+1 + "");
+		distanceText.setText(run.getDistance() + " m");
+		timeText.setText(run.getTime() + " min");
 
 		return vi;
 	}

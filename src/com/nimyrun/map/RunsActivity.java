@@ -23,6 +23,7 @@ public class RunsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_runs);
 
 		Bundle b = getIntent().getExtras();
 		route = (Route) b.getParcelable("route");
@@ -32,10 +33,8 @@ public class RunsActivity extends Activity {
 		
 		Button newRunButton = (Button)findViewById(R.id.newRun);
 		if(validated) {
-			newRunButton.setVisibility(View.VISIBLE); //to set visible
+			newRunButton.setVisibility(View.GONE); //to set visible
 		}
-
-		setContentView(R.layout.activity_runs);
 
 		list = (ListView) findViewById(R.id.listView2);
 		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

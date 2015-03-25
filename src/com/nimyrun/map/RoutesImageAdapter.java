@@ -68,8 +68,8 @@ public class RoutesImageAdapter extends BaseAdapter {
 			}
 			i++;
 		}
-		baseUrl += "&size=480x280";
-		baseUrl += "&zoom=17";
+		baseUrl += "&size=1080x1080";
+		baseUrl += "&zoom=18";
 		baseUrl += "&key=AIzaSyBlSoG9MOexZBwYnwRQq0QWVGY9a7eDab0";
 		return baseUrl;
 	}
