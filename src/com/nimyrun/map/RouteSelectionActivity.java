@@ -6,14 +6,26 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 public class RouteSelectionActivity extends Activity {
+	
+	protected int nymiHandle;
+	boolean validated = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_route_selection);
+		
+		Intent iin= getIntent();
+        Bundle b = iin.getExtras();
+
+        if(b!=null)
+        {
+            nymiHandle = b.getInt("nymiHandle");
+            validated = b.getBoolean("validated");
+            LoginScreen.appendLog("onCreate", "nymiHandle passed over to routesactivity is " + nymiHandle);
+        }
 	}
 
 	/*
@@ -24,11 +36,15 @@ public class RouteSelectionActivity extends Activity {
 			Intent intent = new Intent(getApplicationContext(),
 					MainActivity.class);
 			intent.putExtra("isNewRoute", true);
+			intent.putExtra("validated", validated);
+			intent.putExtra("nymiHandle", nymiHandle);
 			startActivity(intent);
 		}
 		if (v.getId() == R.id.button2) {
 			Intent intent = new Intent(getApplicationContext(),
 					RoutesActivity.class);
+			intent.putExtra("validated", validated);
+			intent.putExtra("nymiHandle", nymiHandle);
 			startActivity(intent);
 		}
 
