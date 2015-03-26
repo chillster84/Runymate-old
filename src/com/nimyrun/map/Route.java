@@ -3,6 +3,7 @@ package com.nimyrun.map;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -50,6 +51,28 @@ public class Route implements Parcelable {
 		this.path = path;
 	}
 
+	/*
+	 * Checks if a point is on a given route
+	 */
+	public boolean isPointInRoute(LatLng point) {
+		for (LatLng pathPoint : path) {
+			if (isPointCloseToPathPoint(point, pathPoint)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isPointCloseToPathPoint(LatLng point, LatLng pathPoint) {
+		float threshold = 10;
+		float[] result = { 0, 0 };
+		Location.distanceBetween(point.latitude, point.longitude,pathPoint.latitude, pathPoint.longitude,result);
+		if (result[0] < threshold) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	protected Route(Parcel in) {
 		name = in.readString();
