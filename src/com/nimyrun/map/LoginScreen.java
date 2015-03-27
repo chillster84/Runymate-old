@@ -564,9 +564,11 @@ public class LoginScreen extends Activity {
 						nymiHandle = ((NclEventFind) event).nymiHandle;
 						if(Ncl.validate(((NclEventFind) event).nymiHandle) == false) {
 							//failed to start validation. abort?
+							appendLog("Ncl.validate called, ", "error in start validation?");
 						}
 						else {
 							nymiScan.cancel();
+							appendLog("Nymi Find", " cancelling countdown timer");
 							state = State.VALIDATING;
 						}
 					}
@@ -579,6 +581,7 @@ public class LoginScreen extends Activity {
 			else if (event instanceof NclEventValidation) {
 				if (nymiHandle == ((NclEventValidation) event).nymiHandle) {
 					if(Ncl.stopScan() == false) {
+						appendLog("NclEventValidation, ", "error in ncl.stopscan?");
 						//error stopping scan
 					}
 					else {
@@ -586,6 +589,7 @@ public class LoginScreen extends Activity {
 						state = State.VALIDATED;
 
 						//Validation complete. Go to Map List Screen
+						appendLog("Nymi Validate", "Starting routeselectionactivity");
 		                Intent intent = new Intent(mActivity, RouteSelectionActivity.class);
 		              //HOSSEIN: What is the screen we go to here, instead of MapListScreen.class?
 		                intent.putExtra("validated", true);

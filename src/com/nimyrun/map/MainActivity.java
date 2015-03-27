@@ -8,8 +8,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
@@ -19,6 +21,8 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -110,6 +114,17 @@ public class MainActivity extends Activity implements LocationListener {
 	Activity mActivity = this;
 	public static List<Integer> ecgSamples = new ArrayList<Integer>();
 	public static List<Integer> possibleRvalues = new ArrayList<Integer>();
+	private int mStepValue;
+    private int mPaceValue;
+    private float mDistanceValue;
+    private float mSpeedValue;
+    private int mCaloriesValue;
+    private Utils mUtils;
+    private SharedPreferences mSettings;
+    private PedometerSettings mPedometerSettings;
+    private boolean mIsRunning;
+    private static final String TAG = "Pedometer";
+    private boolean mQuitting = false; // Set when user selected Quit from menu, can be used by onPause, onStop, onDestroy
 
 	/*
 	 * Set actions for initial creation of activity.
@@ -126,10 +141,14 @@ public class MainActivity extends Activity implements LocationListener {
 		// Get info from caller
 		Bundle b = getIntent().getExtras();
 		nymiHandle = b.getInt("nymiHandle");
+		LoginScreen.appendLog("onCreate", "nymiHandle passed over to mainactivity is " + nymiHandle);
 		interval = b.getInt("interval");
+		LoginScreen.appendLog("onCreate", "interval is " + interval);
 		isNewRoute = (boolean) b.getBoolean("isNewRoute");
+		LoginScreen.appendLog("onCreate", "isnewRoute " + isNewRoute);
 		if (!isNewRoute) {
 			routePosition = (int) b.getInt("routePosition");
+			LoginScreen.appendLog("onCreate", "routeposition " + routePosition);
 		}
 		
 		if (nclCallback == null) {
@@ -137,6 +156,7 @@ public class MainActivity extends Activity implements LocationListener {
 		}
         
         Ncl.addBehavior(nclCallback, null, NclEventType.NCL_EVENT_ANY, nymiHandle);
+        LoginScreen.appendLog("onCreate", "added ncl behaviour");
 
 		// Assign views to variables
 		
@@ -152,10 +172,19 @@ public class MainActivity extends Activity implements LocationListener {
 		heartField = (TextView) findViewById(R.id.heartValue);
 		heartPeakImage = (ImageView) findViewById(R.id.heartPeakImage);
 		button = (Button) findViewById(R.id.button01);
+		LoginScreen.appendLog("onCreate", "just doing view ids");
+		
+		mStepValue = 0;
+        mPaceValue = 0;
+        
+        //mUtils = Utils.getInstance(); PEDO CODE
+        LoginScreen.appendLog("onCreate", "mutils got instance");
 
 		// Initialize map
 		try {
+			LoginScreen.appendLog("onCreate", "initilize map");
 			initilizeMap();
+			LoginScreen.appendLog("onCreate", "after initilize map");
 			gMap.setMyLocationEnabled(true);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -175,13 +204,17 @@ public class MainActivity extends Activity implements LocationListener {
 		}
 
 		// Get the location manager
+		LoginScreen.appendLog("onCreate", "locationManager getService");
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
+		LoginScreen.appendLog("onCreate", "after locationManager getService");
 		// Define the criteria for selecting the location provider (default
 		// used)
 		Criteria criteria = new Criteria();
+		LoginScreen.appendLog("onCreate", "after criter");
 		provider = locationManager.getBestProvider(criteria, false);
+		LoginScreen.appendLog("onCreate", "after getbestprov");
 		location = locationManager.getLastKnownLocation(provider);
+		LoginScreen.appendLog("onCreate", "after lastknown");
 
 		// Initialize location fields
 		if (location != null) {
@@ -195,7 +228,7 @@ public class MainActivity extends Activity implements LocationListener {
 			 * public void onFinish() { latitudeField.setText("done!"); }
 			 * }.start();
 			 */
-			System.out.println("Provider " + provider + " has been selected.");
+			LoginScreen.appendLog("oncreate if location !=null:  ","Provider " + provider + " has been selected.");
 
 			onLocationChanged(location);
 			
@@ -204,6 +237,7 @@ public class MainActivity extends Activity implements LocationListener {
 			//latitudeField.setText("Location not available.");
 			//longitudeField.setText("Location not available.");
 		}
+		LoginScreen.appendLog("End of oncreate"," Here");
 	}
 
 	/*
@@ -212,10 +246,30 @@ public class MainActivity extends Activity implements LocationListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		LoginScreen.appendLog("onresume", "b4 initilize");
 		initilizeMap();
+		LoginScreen.appendLog("onresume()", "after initilize");
 		locationManager.requestLocationUpdates(provider, LOCATION_MIN_TIME * 1000, 0,
 				this);
+		LoginScreen.appendLog("onresume()", "after requestlocationupdates");
 		updateLocation();
+		LoginScreen.appendLog("onresume", "after updatelocation");
+		/* PEDO CODE mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        mPedometerSettings = new PedometerSettings(mSettings);
+        
+        // Read from preferences if the service was running on the last onPause
+        mIsRunning = mPedometerSettings.isServiceRunning();
+        
+        // Start the service if this is considered to be an application start (last onPause was long ago)
+        if (!mIsRunning && mPedometerSettings.isNewStart()) {
+            startStepService();
+            bindStepService();
+        }
+        else if (mIsRunning) {
+            bindStepService();
+        }
+        
+        mPedometerSettings.clearServiceRunning();*/
 	}
 
 	/*
@@ -225,6 +279,16 @@ public class MainActivity extends Activity implements LocationListener {
 	protected void onPause() {
 		super.onPause();
 		//locationManager.removeUpdates(this);
+		LoginScreen.appendLog(TAG, "[ACTIVITY] onPause");
+        /*if (mIsRunning) {
+            unbindStepService();
+        }
+        if (mQuitting) {
+            mPedometerSettings.saveServiceRunningWithNullTimestamp(mIsRunning);
+        }
+        else {
+            mPedometerSettings.saveServiceRunningWithTimestamp(mIsRunning);
+        }*/
 	}
 
 	/*
@@ -237,6 +301,7 @@ public class MainActivity extends Activity implements LocationListener {
 	@Override
 	public void onLocationChanged(Location newLocation) {
 		location = newLocation;
+		LoginScreen.appendLog("onlocationchanged", " = " + newLocation.toString());
 		updateLocation();
 	}
 
@@ -284,6 +349,108 @@ public class MainActivity extends Activity implements LocationListener {
 				Toast.LENGTH_SHORT).show();
 	}
 
+	
+	/* PEDO CODE
+	private StepService.ICallback mCallback = new StepService.ICallback() {
+        public void stepsChanged(int value) {
+            mHandler.sendMessage(mHandler.obtainMessage(STEPS_MSG, value, 0));
+        }
+        public void paceChanged(int value) {
+            mHandler.sendMessage(mHandler.obtainMessage(PACE_MSG, value, 0));
+        }
+        public void distanceChanged(float value) {
+            mHandler.sendMessage(mHandler.obtainMessage(DISTANCE_MSG, (int)(value*1000), 0));
+        }
+        public void speedChanged(float value) {
+            mHandler.sendMessage(mHandler.obtainMessage(SPEED_MSG, (int)(value*1000), 0));
+        }
+        public void caloriesChanged(float value) {
+            mHandler.sendMessage(mHandler.obtainMessage(CALORIES_MSG, (int)(value), 0));
+        }
+    };
+    
+    private static final int STEPS_MSG = 1;
+    private static final int PACE_MSG = 2;
+    private static final int DISTANCE_MSG = 3;
+    private static final int SPEED_MSG = 4;
+    private static final int CALORIES_MSG = 5;
+    
+    private Handler mHandler = new Handler() {
+        @Override public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case STEPS_MSG:
+                    mStepValue = (int)msg.arg1; //HOSSEIN: Updated steps value. send to runmetric? idk
+                    LoginScreen.appendLog("step count", " = " + mStepValue);
+                    break;
+                case PACE_MSG:
+                    mPaceValue = msg.arg1;
+                    LoginScreen.appendLog("pace count", " = " + mPaceValue);
+                    break;
+                case DISTANCE_MSG:
+                    mDistanceValue = ((int)msg.arg1)/1000f;
+                    LoginScreen.appendLog("distance count", " = " + mDistanceValue);
+                    break;
+                case SPEED_MSG:
+                    mSpeedValue = ((int)msg.arg1)/1000f;
+                    LoginScreen.appendLog("speed count", " = " + mSpeedValue);
+                    break;
+                case CALORIES_MSG:
+                    mCaloriesValue = msg.arg1;
+                    LoginScreen.appendLog("calories count", " = " + mStepValue);
+                    break;
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+        
+    };
+	
+	private StepService mService;
+	
+	private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            mService = ((StepService.StepBinder)service).getService();
+
+            mService.registerCallback(mCallback);
+            mService.reloadSettings();
+            
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            mService = null;
+        }
+    };
+	
+	private void startStepService() {
+        if (! mIsRunning) {
+            LoginScreen.appendLog(TAG, "[SERVICE] Start");
+            mIsRunning = true;
+            startService(new Intent(MainActivity.this,
+                    StepService.class));
+        }
+    }
+    
+    private void bindStepService() {
+        LoginScreen.appendLog(TAG, "[SERVICE] Bind");
+        bindService(new Intent(MainActivity.this, 
+                StepService.class), mConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
+    }
+
+    private void unbindStepService() {
+        LoginScreen.appendLog(TAG, "[SERVICE] Unbind");
+        unbindService(mConnection);
+    }
+    
+    private void stopStepService() {
+        LoginScreen.appendLog(TAG, "[SERVICE] Stop");
+        if (mService != null) {
+            LoginScreen.appendLog(TAG, "[SERVICE] stopService");
+            stopService(new Intent(MainActivity.this,
+                  StepService.class));
+        }
+        mIsRunning = false;
+    }
+*/
 	/*
 	 * Set actions for button clicks.
 	 */
@@ -331,16 +498,21 @@ public class MainActivity extends Activity implements LocationListener {
 	 * Initialize Google map.
 	 */
 	private void initilizeMap() {
+		LoginScreen.appendLog("initilizeMap()", "entered");
 		if (gMap == null) {
+			LoginScreen.appendLog("initilizeMap()", "gmap null");
 			gMap = ((MapFragment) getFragmentManager().findFragmentById(
 					R.id.map)).getMap();
+			LoginScreen.appendLog("initilizeMap()", "gmap did getmap");
 
 			// Check if map is created successfully
 			if (gMap == null) {
+				LoginScreen.appendLog("initilizeMap()", "gmap still null");
 				Toast.makeText(getApplicationContext(),
 						"Unable to create map.", Toast.LENGTH_SHORT).show();
 			}
 		}
+		LoginScreen.appendLog("initilizeMap()", "exiting");
 	}
 
 	/*
@@ -405,7 +577,8 @@ public class MainActivity extends Activity implements LocationListener {
 		count++;
 
 		if (speed < 15) { // Fastest recorded running speed is about 12 m/s
-			addRunMetric(heartbeat);
+			//add a runMetric without a heart rate
+			addRunMetric(0.0);
 
 			speedMap.put(count + "", speed);
 			heartMap.put(count + "", heartbeat);
@@ -426,55 +599,66 @@ public class MainActivity extends Activity implements LocationListener {
 		runMetrics.add(newRunMetric);
 	}
 
-	private void updateLocation() {		
-		double newDistance = 0;
-		
-		double accuracy = location.getAccuracy();
-		
-		newLatitude = location.getLatitude();
-		newLongitude = location.getLongitude();
+	private void updateLocation() {
+		LoginScreen.appendLog("updatelocation()", "entered");
+		if(location!=null) {
+			double newDistance = 0;
+			LoginScreen.appendLog("updatelocation()", "location not null anymore?");
+			double accuracy = location.getAccuracy();
+			LoginScreen.appendLog("updatelocation()", "accuracy = " + accuracy);
+			newLatitude = location.getLatitude();
+			LoginScreen.appendLog("updatelocation()", "newlat = " + newLatitude);
+			newLongitude = location.getLongitude();
+			LoginScreen.appendLog("updatelocation()", "newlong = " + newLongitude);
 
-		//prevLatitudeField.setText(String.valueOf(latitude));
-		//prevLongitudeField.setText(String.valueOf(longitude));
-		//latitudeField.setText(String.valueOf(newLatitude));
-		//longitudeField.setText(String.valueOf(newLongitude));
-		
-		newDistance = getDistance(latitude, longitude, newLatitude,
-				newLongitude);
-		
-		speed = newDistance / (LOCATION_MIN_TIME * errorFactor);
-		
-		speedField.setText((double) Math.round(speed * 100) / 100 + "");
-		heartbeat = 150 + (count / 5 * 10);
-		heartField.setText(heartbeat + "");
-		
-		setAnimation(speedBlockerImage, speed);
-		setAnimation(heartPeakImage, heartbeat);
-		
-		if (speed < 12 && accuracy < 15) { // If latest detected location makes sense
-			distance = distance + newDistance;
+			//prevLatitudeField.setText(String.valueOf(latitude));
+			//prevLongitudeField.setText(String.valueOf(longitude));
+			//latitudeField.setText(String.valueOf(newLatitude));
+			//longitudeField.setText(String.valueOf(newLongitude));
 			
-			try {
-				updatePolyline(newLatitude, newLongitude);
-				getCameraToCurrentLocation(newLatitude, newLongitude);
-			} catch (Exception e) {
-				e.printStackTrace();
+			newDistance = getDistance(latitude, longitude, newLatitude,
+					newLongitude);
+			LoginScreen.appendLog("updatelocation()", "newdistance = " + distance);
+			
+			speed = newDistance / (LOCATION_MIN_TIME * errorFactor);
+			
+			speedField.setText((double) Math.round(speed * 100) / 100 + "");
+			heartbeat = 150 + (count / 5 * 10);
+			heartField.setText(heartbeat + "");
+			
+			setAnimation(speedBlockerImage, speed);
+			setAnimation(heartPeakImage, heartbeat);
+			LoginScreen.appendLog("updatelocation()", "set animations");
+			
+			if (speed < 12 && accuracy < 15) { // If latest detected location makes sense
+				distance = distance + newDistance;
+				
+				try {
+					updatePolyline(newLatitude, newLongitude);
+					LoginScreen.appendLog("updatelocation()", "update polyline");
+					getCameraToCurrentLocation(newLatitude, newLongitude);
+					LoginScreen.appendLog("updatelocation()", "get cam to currentlocation");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				latitude = newLatitude;
+				longitude = newLongitude;
+				
+				errorFactor = 1;
+			}
+			else { // If latest detected location is off
+				errorFactor++;
 			}
 			
-			latitude = newLatitude;
-			longitude = newLongitude;
-			
-			errorFactor = 1;
-		}
-		else { // If latest detected location is off
-			errorFactor++;
+			// The first time location is detected - TO IMPROVE LATER
+			if (latitude == 0 && longitude == 0) {
+				latitude = newLatitude;
+				longitude = newLongitude;
+			}
 		}
 		
-		// The first time location is detected - TO IMPROVE LATER
-		if (latitude == 0 && longitude == 0) {
-			latitude = newLatitude;
-			longitude = newLongitude;
-		}
+		LoginScreen.appendLog("updatelocation()", "exiting updateloc()");
 	}
 	
 	public void onStop(){
@@ -590,6 +774,9 @@ public class MainActivity extends Activity implements LocationListener {
              heart_rate = 250.0*60.0/diff_avg;
              
              LoginScreen.appendLog("Possible heart rate: ", heart_rate + "\n");
+             
+             // add a runMetric with a valid heart rate
+             addRunMetric(heart_rate);
              
     		 
              /* YERUSHA: value heart_rate after 60second interval. something with sample() or addmetric or something

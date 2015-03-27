@@ -32,9 +32,9 @@ public class RunsActivity extends Activity {
 		nymiHandle = b.getInt("nymiHandle");
 		
 		Button newRunButton = (Button)findViewById(R.id.newRun);
-		if(validated) {
-			newRunButton.setVisibility(View.GONE); //to set visible
-		}
+		//if(!validated) {
+		//	newRunButton.setVisibility(View.GONE); //to set visible
+		//}
 
 		list = (ListView) findViewById(R.id.listView2);
 		list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

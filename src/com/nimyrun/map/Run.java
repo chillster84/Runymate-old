@@ -94,8 +94,10 @@ public class Run implements Parcelable {
 		double avg = 0;
 		int i = 0;
 		for (RunMetric runMetric : runMetrics) {
-			i++;
-			avg = runMetric.getHeartRate() + avg;
+			if (runMetric.getHeartRate() != 0.00) {
+				i++;
+				avg = runMetric.getHeartRate() + avg;
+			}
 		}
 		return avg / i;
 	}

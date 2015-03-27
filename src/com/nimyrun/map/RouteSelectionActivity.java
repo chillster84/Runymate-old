@@ -1,16 +1,20 @@
 package com.nimyrun.map;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class RouteSelectionActivity extends Activity {
 	
 	protected int nymiHandle;
 	boolean validated = false;
+	Activity mActivity = this;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -19,12 +23,16 @@ public class RouteSelectionActivity extends Activity {
 		
 		Intent iin= getIntent();
         Bundle b = iin.getExtras();
+        
+        LoginScreen.appendLog("got intent", "from loginscreen");
 
         if(b!=null)
         {
             nymiHandle = b.getInt("nymiHandle");
             validated = b.getBoolean("validated");
-            LoginScreen.appendLog("onCreate", "nymiHandle passed over to routesactivity is " + nymiHandle);
+            Toast.makeText(getApplicationContext(),
+					"nymiHandle = " + nymiHandle, Toast.LENGTH_SHORT).show();
+            LoginScreen.appendLog("onCreate", "nymiHandle passed over to routeselectionactivity is " + nymiHandle);
         }
 	}
 
@@ -33,14 +41,36 @@ public class RouteSelectionActivity extends Activity {
 	 */
 	public void onButtonClick(View v) {
 		if (v.getId() == R.id.button1) {
-			Intent intent = new Intent(getApplicationContext(),
-					MainActivity.class);
-			intent.putExtra("isNewRoute", true);
-			intent.putExtra("validated", validated);
-			intent.putExtra("nymiHandle", nymiHandle);
-			startActivity(intent);
+			
+			final CharSequence intervals[] = new CharSequence[] {"1 minute", "2 minutes", "3 minutes", "4 minutes", "5 minutes"};
+			
+			 mActivity.runOnUiThread(new Runnable() {
+		 		public void run() {
+			
+					AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+					builder.setTitle("Performance Tracking Interval");
+					builder.setItems(intervals, new DialogInterface.OnClickListener() {
+					    @Override
+					    public void onClick(DialogInterface dialog, int which) {
+					        // the user clicked on intervals[which]
+			
+							Intent intent = new Intent(getApplicationContext(),
+									MainActivity.class);
+							intent.putExtra("isNewRoute", true);
+							intent.putExtra("interval", (which+1)*60);
+							intent.putExtra("validated", validated);
+							intent.putExtra("nymiHandle", nymiHandle);
+							
+							startActivity(intent);
+					    }
+					});
+					builder.show();
+		 		}
+			 });
+			
 		}
 		if (v.getId() == R.id.button2) {
+			LoginScreen.appendLog("routeselection activity ", "selected browse previous - routesactivity");
 			Intent intent = new Intent(getApplicationContext(),
 					RoutesActivity.class);
 			intent.putExtra("validated", validated);
