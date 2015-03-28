@@ -142,7 +142,8 @@ public class MainActivity extends Activity implements LocationListener {
 		Bundle b = getIntent().getExtras();
 		nymiHandle = b.getInt("nymiHandle");
 		LoginScreen.appendLog("onCreate", "nymiHandle passed over to mainactivity is " + nymiHandle);
-		interval = b.getInt("interval");
+		//interval = b.getInt("interval");
+		interval = 20;
 		LoginScreen.appendLog("onCreate", "interval is " + interval);
 		isNewRoute = (boolean) b.getBoolean("isNewRoute");
 		LoginScreen.appendLog("onCreate", "isnewRoute " + isNewRoute);
@@ -177,7 +178,7 @@ public class MainActivity extends Activity implements LocationListener {
 		mStepValue = 0;
         mPaceValue = 0;
         
-        //mUtils = Utils.getInstance(); PEDO CODE
+        mUtils = Utils.getInstance();
         LoginScreen.appendLog("onCreate", "mutils got instance");
 
 		// Initialize map
@@ -237,6 +238,18 @@ public class MainActivity extends Activity implements LocationListener {
 			//latitudeField.setText("Location not available.");
 			//longitudeField.setText("Location not available.");
 		}
+		
+		CountDownTimer runIntervalTimer = new CountDownTimer(interval*1000, 1000) { //15second intervals for now
+			public void onTick(long millisUntilFinished) {
+				LoginScreen.appendLog("runIntervalTimer", "seconds remaining: " + millisUntilFinished / 1000);
+			}
+    		public void onFinish() {
+    			startingECG = true;
+    			Ncl.notify(nymiHandle, true);
+    			readECG();
+    		}
+		}.start();
+		
 		LoginScreen.appendLog("End of oncreate"," Here");
 	}
 
@@ -254,7 +267,7 @@ public class MainActivity extends Activity implements LocationListener {
 		LoginScreen.appendLog("onresume()", "after requestlocationupdates");
 		updateLocation();
 		LoginScreen.appendLog("onresume", "after updatelocation");
-		/* PEDO CODE mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+		mSettings = PreferenceManager.getDefaultSharedPreferences(this);
         mPedometerSettings = new PedometerSettings(mSettings);
         
         // Read from preferences if the service was running on the last onPause
@@ -269,7 +282,7 @@ public class MainActivity extends Activity implements LocationListener {
             bindStepService();
         }
         
-        mPedometerSettings.clearServiceRunning();*/
+        mPedometerSettings.clearServiceRunning();
 	}
 
 	/*
@@ -280,7 +293,7 @@ public class MainActivity extends Activity implements LocationListener {
 		super.onPause();
 		//locationManager.removeUpdates(this);
 		LoginScreen.appendLog(TAG, "[ACTIVITY] onPause");
-        /*if (mIsRunning) {
+        if (mIsRunning) {
             unbindStepService();
         }
         if (mQuitting) {
@@ -288,7 +301,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
         else {
             mPedometerSettings.saveServiceRunningWithTimestamp(mIsRunning);
-        }*/
+        }
 	}
 
 	/*
@@ -350,7 +363,6 @@ public class MainActivity extends Activity implements LocationListener {
 	}
 
 	
-	/* PEDO CODE
 	private StepService.ICallback mCallback = new StepService.ICallback() {
         public void stepsChanged(int value) {
             mHandler.sendMessage(mHandler.obtainMessage(STEPS_MSG, value, 0));
@@ -450,7 +462,7 @@ public class MainActivity extends Activity implements LocationListener {
         }
         mIsRunning = false;
     }
-*/
+
 	/*
 	 * Set actions for button clicks.
 	 */
@@ -594,6 +606,7 @@ public class MainActivity extends Activity implements LocationListener {
 				location.getLongitude());
 		double currentTimestamp = System.currentTimeMillis();
 		double currentSpeed = speed;
+		LoginScreen.appendLog("addrunmetric", "adding heart rate "+ currentHeartRate + " as newRunMetric");
 		RunMetric newRunMetric = new RunMetric(currentPosition, currentSpeed,
 				currentHeartRate, currentTimestamp);
 		runMetrics.add(newRunMetric);
