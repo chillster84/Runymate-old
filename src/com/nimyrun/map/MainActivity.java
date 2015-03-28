@@ -125,6 +125,7 @@ public class MainActivity extends Activity implements LocationListener {
     private boolean mIsRunning;
     private static final String TAG = "Pedometer";
     private boolean mQuitting = false; // Set when user selected Quit from menu, can be used by onPause, onStop, onDestroy
+    CountDownTimer runIntervalTimer;
 
 	/*
 	 * Set actions for initial creation of activity.
@@ -180,6 +181,17 @@ public class MainActivity extends Activity implements LocationListener {
         
         mUtils = Utils.getInstance();
         LoginScreen.appendLog("onCreate", "mutils got instance");
+        
+        runIntervalTimer = new CountDownTimer(interval*1000, 1000) { //15second intervals for now
+			public void onTick(long millisUntilFinished) {
+				LoginScreen.appendLog("runIntervalTimer", "seconds remaining: " + millisUntilFinished / 1000);
+			}
+    		public void onFinish() {
+    			startingECG = true;
+    			Ncl.notify(nymiHandle, true);
+    			readECG();
+    		}
+		};
         
 
 		// Initialize map
@@ -479,7 +491,9 @@ public class MainActivity extends Activity implements LocationListener {
 		if (v.getId() == R.id.button01) {
 			Run run = new Run(distance, (double) (count * LOCATION_MIN_TIME));
 			run.setRunMetrics(runMetrics);
-
+			Ncl.removeBehavior(nclCallback, null, NclEventType.NCL_EVENT_ANY, nymiHandle);
+			runIntervalTimer.cancel();
+			
 			Intent intent = new Intent(getApplicationContext(),
 					ActivityResults.class);
 			intent.putExtra("speedPoints", speedMap);
@@ -716,16 +730,8 @@ public class MainActivity extends Activity implements LocationListener {
 	
 	
 	public void runIntervalTimer(View v) {
-		CountDownTimer runIntervalTimer = new CountDownTimer(interval*1000, 1000) { //15second intervals for now
-			public void onTick(long millisUntilFinished) {
-				LoginScreen.appendLog("runIntervalTimer", "seconds remaining: " + millisUntilFinished / 1000);
-			}
-    		public void onFinish() {
-    			startingECG = true;
-    			Ncl.notify(nymiHandle, true);
-    			readECG();
-    		}
-		}.start();
+		runIntervalTimer.start();
+		
 	}
 	
 	/* readECG function. start the ECG Stream,
