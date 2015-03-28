@@ -11,14 +11,16 @@ public class RunMetric implements Parcelable {
 	double speed;
 	double heartRate;
 	double timestamp;
+	int totalStepsTaken;
 
-	public RunMetric(LatLng latlng, double speed, double heartRate,
+	public RunMetric(LatLng latlng, double speed, double heartRate, int totalStepsTaken,
 			double timestamp) {
 		super();
 		this.latlng = latlng;
 		this.speed = speed;
 		this.heartRate = heartRate;
 		this.timestamp = timestamp;
+		this.totalStepsTaken = totalStepsTaken;
 	}
 	
 

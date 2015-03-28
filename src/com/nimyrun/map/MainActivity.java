@@ -180,6 +180,7 @@ public class MainActivity extends Activity implements LocationListener {
         
         mUtils = Utils.getInstance();
         LoginScreen.appendLog("onCreate", "mutils got instance");
+        
 
 		// Initialize map
 		try {
@@ -438,6 +439,22 @@ public class MainActivity extends Activity implements LocationListener {
         LoginScreen.appendLog(TAG, "[SERVICE] Bind");
         bindService(new Intent(MainActivity.this, 
                 StepService.class), mConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
+        
+        if (mService != null && mIsRunning) {
+        	LoginScreen.appendLog("bind step service", "mService is not null");
+            mService.resetValues();                    
+        }
+        else {    
+            SharedPreferences state = getSharedPreferences("state", 0);
+            SharedPreferences.Editor stateEditor = state.edit();
+                stateEditor.putInt("steps", 0);
+                stateEditor.putInt("pace", 0);
+                stateEditor.putFloat("distance", 0);
+                stateEditor.putFloat("speed", 0);
+                stateEditor.putFloat("calories", 0);
+                stateEditor.commit();
+        }
+        LoginScreen.appendLog(TAG, "[SERVICE] Bind - reset step values");
     }
 
     private void unbindStepService() {
@@ -582,7 +599,7 @@ public class MainActivity extends Activity implements LocationListener {
 
 		if (speed < 15) { // Fastest recorded running speed is about 12 m/s
 			//add a runMetric without a heart rate
-			addRunMetric(0.0);
+			addRunMetric(0.0, 0);
 
 			speedMap.put(count + "", speed);
 			heartMap.put(count + "", heartbeat);
@@ -593,15 +610,21 @@ public class MainActivity extends Activity implements LocationListener {
 				Toast.LENGTH_SHORT).show();
 	}
 	
-	private void addRunMetric(double currentHeartRate) {
-		LatLng currentPosition = new LatLng(location.getLatitude(),
-				location.getLongitude());
-		double currentTimestamp = System.currentTimeMillis();
-		double currentSpeed = speed;
-		LoginScreen.appendLog("addrunmetric", "adding heart rate "+ currentHeartRate + " as newRunMetric");
-		RunMetric newRunMetric = new RunMetric(currentPosition, currentSpeed,
-				currentHeartRate, currentTimestamp);
-		runMetrics.add(newRunMetric);
+	private void addRunMetric(double currentHeartRate, int totalStepsTaken) {
+		LoginScreen.appendLog("in addrunmetric", " adding " + currentHeartRate);
+		if(location!=null) {
+			LatLng currentPosition = new LatLng(location.getLatitude(),
+					location.getLongitude());
+			LoginScreen.appendLog("in addrunmetric", "after currentPos");
+			double currentTimestamp = System.currentTimeMillis();
+			double currentSpeed = speed;
+			LoginScreen.appendLog("addrunmetric", "adding heart rate "+ currentHeartRate + " as newRunMetric");
+			LoginScreen.appendLog("addrunmetric", "with total steps = "+ totalStepsTaken);
+			RunMetric newRunMetric = new RunMetric(currentPosition, currentSpeed,
+					currentHeartRate, totalStepsTaken, currentTimestamp);
+			runMetrics.add(newRunMetric);
+		}
+		LoginScreen.appendLog("in addrunmetric", " leaving");
 	}
 
 	private void updateLocation() {
@@ -781,7 +804,9 @@ public class MainActivity extends Activity implements LocationListener {
              LoginScreen.appendLog("Possible heart rate: ", heart_rate + "\n");
              
              // add a runMetric with a valid heart rate
-             addRunMetric(heart_rate);
+             //addRunMetric(heart_rate );
+             addRunMetric(heart_rate, mStepValue);
+             LoginScreen.appendLog("after addRunMetric", " wasup");
              
     		 
              /* YERUSHA: value heart_rate after 60second interval. something with sample() or addmetric or something
