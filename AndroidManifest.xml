@@ -53,30 +53,35 @@
         <!-- Main activity -->
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait" >
         </activity>
         <activity android:name=".ActivityResults" >
         </activity>
         <activity
             android:name=".RoutesActivity"
-            android:label="@string/title_activity_routes" >
+            android:label="@string/title_activity_routes"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".RunsActivity"
-            android:label="@string/title_activity_runs" >
+            android:label="@string/title_activity_runs"
+            android:screenOrientation="portrait" >
         </activity>
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCuOrUD_-tTJT2is4mIEUsI0NthipdvOJg" />
+            android:value="AIzaSyCcceil-flWeGqcS9Y8Bq7ATOtJhMQX4B8" />
 
         <activity
             android:name=".RunMetricsActivity"
-            android:label="@string/title_activity_run_metrics" >
+            android:label="@string/title_activity_run_metrics"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".RouteSelectionActivity"
-            android:label="@string/title_activity_route_selection" >
+            android:label="@string/title_activity_route_selection" 
+            android:screenOrientation="portrait">
         </activity>
 
         <service android:name=".StepService" />

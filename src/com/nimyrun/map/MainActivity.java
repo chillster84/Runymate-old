@@ -239,16 +239,7 @@ public class MainActivity extends Activity implements LocationListener {
 			//longitudeField.setText("Location not available.");
 		}
 		
-		CountDownTimer runIntervalTimer = new CountDownTimer(interval*1000, 1000) { //15second intervals for now
-			public void onTick(long millisUntilFinished) {
-				LoginScreen.appendLog("runIntervalTimer", "seconds remaining: " + millisUntilFinished / 1000);
-			}
-    		public void onFinish() {
-    			startingECG = true;
-    			Ncl.notify(nymiHandle, true);
-    			readECG();
-    		}
-		}.start();
+		runIntervalTimer(null);
 		
 		LoginScreen.appendLog("End of oncreate"," Here");
 	}
@@ -393,6 +384,7 @@ public class MainActivity extends Activity implements LocationListener {
                 case STEPS_MSG:
                     mStepValue = (int)msg.arg1; //HOSSEIN: Updated steps value. send to runmetric? idk
                     LoginScreen.appendLog("step count", " = " + mStepValue);
+                    //HOSSEIN PLS
                     break;
                 case PACE_MSG:
                     mPaceValue = msg.arg1;
@@ -816,6 +808,7 @@ public class MainActivity extends Activity implements LocationListener {
              mActivity.runOnUiThread(new Runnable() {
     	 			public void run() {
     	 				runIntervalTimer(null);
+    	 				LoginScreen.appendLog("started interval timer again", " after getting HR");
     	 			}
              });
              
