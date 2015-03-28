@@ -26,6 +26,7 @@ public class RunMetricsActivity extends Activity {
 	TextView speed;
 	TextView time;
 	TextView heartRate;
+	TextView stepsTaken;
 	Marker prevMarker = null;
 
 	@Override
@@ -46,7 +47,9 @@ public class RunMetricsActivity extends Activity {
 		Builder builder = LatLngBounds.builder();
 		for (RunMetric runMetric : run.getRunMetrics()) {
 			LatLng point = runMetric.getLatlng();
-			gMap.addMarker(new MarkerOptions().position(point));
+			// if (runMetric.getHeartRate() != 0.0) {
+				gMap.addMarker(new MarkerOptions().position(point));
+			// }
 			polylineOptions.add(point);
 			builder.include(point);
 		}
@@ -54,6 +57,7 @@ public class RunMetricsActivity extends Activity {
 		speed = (TextView) findViewById(R.id.textView1);
 		time = (TextView) findViewById(R.id.textView2);
 		heartRate = (TextView) findViewById(R.id.textView3);
+		stepsTaken = (TextView) findViewById(R.id.textView4);
 		bounds = builder.build();
 		gMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
 			@Override
@@ -66,11 +70,14 @@ public class RunMetricsActivity extends Activity {
 					
 					@Override
 					public boolean onMarkerClick(Marker marker) {
-						RunMetric runMetric = getRunMetric(marker);
+						RunMetric runMetric = getRunMetric(marker.getPosition());
 						speed.setText("Speed: " + runMetric.getSpeed() + " m/s");
 						time.setText("Time: " + runMetric.getTimestamp() + " min");
 						heartRate.setText("Heart rate: "
 								+ runMetric.getHeartRate() + " bpm");
+						stepsTaken.setText("Steps taken: "
+								+ runMetric.getTotalStepsTaken()
+								+ " steps");
 						if (prevMarker != null) {
 							prevMarker.setIcon(BitmapDescriptorFactory
 									.defaultMarker());
@@ -86,10 +93,10 @@ public class RunMetricsActivity extends Activity {
 
 	}
 
-	private RunMetric getRunMetric(Marker marker) {
+	private RunMetric getRunMetric(LatLng point) {
 		RunMetric found = null;
 		for (RunMetric runMetric : run.getRunMetrics()) {
-			if (runMetric.getLatlng().equals(marker.getPosition())) {
+			if (runMetric.getLatlng().equals(point)) {
 				found = runMetric;
 				break;
 			}
