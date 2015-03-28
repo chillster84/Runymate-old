@@ -176,8 +176,14 @@ public class RoutesActivity extends Activity {
 		int i = 0;
 		for (LatLng point : routeA.getPath()) {
 			i++;
-			run.addRunMetrics(new RunMetric(point, 22.4 + i, 156 + i,
-					0 + i));
+			if (i % 2 == 0) {
+				run.addRunMetrics(new RunMetric(point, 22.4 + i, 156 + i,
+						0 + i, 0 + i));
+			} else {
+				run.addRunMetrics(new RunMetric(point, 22.4 + i, 0.0, 0 + i,
+						0 + i));
+			}
+
 		}
 
 		return run;

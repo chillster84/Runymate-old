@@ -10,8 +10,9 @@ public class RunMetric implements Parcelable {
 	LatLng latlng;
 	double speed;
 	double heartRate;
-	double timestamp;
 	int totalStepsTaken;
+	double timestamp;
+
 
 	public RunMetric(LatLng latlng, double speed, double heartRate, int totalStepsTaken,
 			double timestamp) {
@@ -19,8 +20,8 @@ public class RunMetric implements Parcelable {
 		this.latlng = latlng;
 		this.speed = speed;
 		this.heartRate = heartRate;
-		this.timestamp = timestamp;
 		this.totalStepsTaken = totalStepsTaken;
+		this.timestamp = timestamp;
 	}
 	
 
@@ -40,10 +41,15 @@ public class RunMetric implements Parcelable {
 		return timestamp;
 	}
 
+	public int getTotalStepsTaken() {
+		return totalStepsTaken;
+	}
+
 	protected RunMetric(Parcel in) {
 		latlng = (LatLng) in.readValue(LatLng.class.getClassLoader());
 		speed = in.readDouble();
 		heartRate = in.readDouble();
+		totalStepsTaken = in.readInt();
 		timestamp = in.readDouble();
 	}
 
@@ -57,6 +63,7 @@ public class RunMetric implements Parcelable {
 		dest.writeValue(latlng);
 		dest.writeDouble(speed);
 		dest.writeDouble(heartRate);
+		dest.writeInt(totalStepsTaken);
 		dest.writeDouble(timestamp);
 	}
 
