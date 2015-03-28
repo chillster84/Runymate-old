@@ -44,12 +44,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.nimyrun.map.LoginScreen;
 
 public class MainActivity extends Activity implements LocationListener {
 	private final static double EARTH_RADIUS = 6371000; // in metres
@@ -211,7 +209,6 @@ public class MainActivity extends Activity implements LocationListener {
 			Route route = retrieveRoute(preferences, routePosition);
 			PolylineOptions polylineOptions = new PolylineOptions();
 			for (LatLng point : route.getPath()) {
-				gMap.addMarker(new MarkerOptions().position(point));
 				polylineOptions.add(point);
 			}
 			gMap.addPolyline(polylineOptions);
@@ -502,7 +499,7 @@ public class MainActivity extends Activity implements LocationListener {
 			intent.putExtra("heartPoints", heartMap);
 			intent.putExtra("run", run);
 			// set to true when this is a newly captured route
-			intent.putExtra("isNewRoute", true);
+			intent.putExtra("isNewRoute", isNewRoute);
 			startActivity(intent);
 		}
 
