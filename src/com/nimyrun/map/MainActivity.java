@@ -8,8 +8,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -24,9 +26,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -124,6 +128,8 @@ public class MainActivity extends Activity implements LocationListener {
     private static final String TAG = "Pedometer";
     private boolean mQuitting = false; // Set when user selected Quit from menu, can be used by onPause, onStop, onDestroy
     CountDownTimer runIntervalTimer;
+	Route route;
+	private String m_Text = "";
 
 	/*
 	 * Set actions for initial creation of activity.
@@ -206,7 +212,7 @@ public class MainActivity extends Activity implements LocationListener {
 		if(!isNewRoute) {
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
-			Route route = retrieveRoute(preferences, routePosition);
+			route = retrieveRoute(preferences, routePosition);
 			PolylineOptions polylineOptions = new PolylineOptions();
 			for (LatLng point : route.getPath()) {
 				polylineOptions.add(point);
@@ -316,6 +322,21 @@ public class MainActivity extends Activity implements LocationListener {
 	public void onLocationChanged(Location newLocation) {
 		location = newLocation;
 		LoginScreen.appendLog("onlocationchanged", " = " + newLocation.toString());
+		if (!isNewRoute) {
+			LatLng point = new LatLng(location.getLatitude(),
+					location.getLongitude());
+			if (!route.isPointInRoute(point)) {
+				// user is outside the route
+				Toast.makeText(this, "You went off route. Run terminated!",
+						Toast.LENGTH_SHORT).show();
+
+				Intent intent = new Intent(getApplicationContext(),
+						RouteSelectionActivity.class);
+				intent.putExtra("validated", true);
+				intent.putExtra("nymiHandle", nymiHandle);
+				startActivity(intent);
+			}
+		}
 		updateLocation();
 	}
 
@@ -486,6 +507,31 @@ public class MainActivity extends Activity implements LocationListener {
 	 */
 	public void onButtonClick(View v) {
 		if (v.getId() == R.id.button01) {
+
+			if (isNewRoute) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("Title");
+
+				// Set up the input
+				final EditText input = new EditText(this);
+				// Specify the type of input expected; this, for example, sets
+				// the input as a password, and will mask the text
+				input.setInputType(InputType.TYPE_CLASS_TEXT
+						| InputType.TYPE_TEXT_VARIATION_PASSWORD);
+				builder.setView(input);
+
+				// Set up the buttons
+				builder.setPositiveButton("OK",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								m_Text = input.getText().toString();
+							}
+						});
+
+				builder.show();
+			}
 			Run run = new Run(distance, (double) (count * LOCATION_MIN_TIME));
 			run.setRunMetrics(runMetrics);
 			Ncl.removeBehavior(nclCallback, null, NclEventType.NCL_EVENT_ANY, nymiHandle);
@@ -500,6 +546,9 @@ public class MainActivity extends Activity implements LocationListener {
 			intent.putExtra("run", run);
 			// set to true when this is a newly captured route
 			intent.putExtra("isNewRoute", isNewRoute);
+			if (isNewRoute) {
+				intent.putExtra("routeName", m_Text);
+			}
 			startActivity(intent);
 		}
 

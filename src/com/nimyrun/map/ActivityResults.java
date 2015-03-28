@@ -46,7 +46,8 @@ public class ActivityResults extends Activity {
 		boolean isNewRoute = (boolean) b.getBoolean("isNewRoute");
 
 		if (isNewRoute) {
-			addNewRouteFromRun(preferences, run);
+			addNewRouteFromRun(preferences, run,
+					(String) b.getString("routeName"));
 		} else {
 			int routePosition = (int) b.getInt("routePosition");
 			addRunToRoute(preferences, run, routePosition);
@@ -207,9 +208,9 @@ public class ActivityResults extends Activity {
 	}
 
 	public static void addNewRouteFromRun(SharedPreferences sharedPreferences,
-			Run run) {
+			Run run, String routeName) {
 		// create route from run
-		Route route = new Route("blah");
+		Route route = new Route(routeName);
 		route.addRun(run);
 		for (RunMetric runMetric : run.getRunMetrics()) {
 			LatLng point = runMetric.getLatlng();

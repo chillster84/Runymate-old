@@ -64,7 +64,7 @@ public class Route implements Parcelable {
 	}
 
 	private boolean isPointCloseToPathPoint(LatLng point, LatLng pathPoint) {
-		float threshold = 10;
+		float threshold = 20;
 		float[] result = { 0, 0 };
 		Location.distanceBetween(point.latitude, point.longitude,pathPoint.latitude, pathPoint.longitude,result);
 		if (result[0] < threshold) {
