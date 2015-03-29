@@ -257,6 +257,23 @@ public class MainActivity extends Activity implements LocationListener {
 		
 		runIntervalTimer(null);
 		
+		mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        mPedometerSettings = new PedometerSettings(mSettings);
+        
+        // Read from preferences if the service was running on the last onPause
+        mIsRunning = mPedometerSettings.isServiceRunning();
+        
+        // Start the service if this is considered to be an application start (last onPause was long ago)
+        if (!mIsRunning && mPedometerSettings.isNewStart()) {
+            startStepService();
+            bindStepService();
+        }
+        else if (mIsRunning) {
+            bindStepService();
+        }
+        
+        mPedometerSettings.clearServiceRunning();
+		
 		LoginScreen.appendLog("End of oncreate"," Here");
 	}
 
@@ -330,6 +347,8 @@ public class MainActivity extends Activity implements LocationListener {
 				// user is outside the route
 				Toast.makeText(this, "You went off route. Run terminated!",
 						Toast.LENGTH_SHORT).show();
+				locationManager.removeUpdates(this);
+				locationManager = null;
 				
 				Ncl.removeBehavior(nclCallback, null, NclEventType.NCL_EVENT_ANY, nymiHandle);
 				LoginScreen.appendLog("offroute, ", "removed Nymi actions");
@@ -527,9 +546,12 @@ public class MainActivity extends Activity implements LocationListener {
 
 			Run run = new Run(distance, (double) (count * LOCATION_MIN_TIME));
 			run.setRunMetrics(runMetrics);
+			
 			LoginScreen.appendLog("clicked Finish, ", "set run metrics");
 			Ncl.removeBehavior(nclCallback, null, NclEventType.NCL_EVENT_ANY, nymiHandle);
 			LoginScreen.appendLog("clicked Finish, ", "removed Nymi actions");
+			locationManager.removeUpdates(this);
+			locationManager = null;
 			runIntervalTimer.cancel();
 			LoginScreen.appendLog("clicked Finish, ", "cancelled interval timer");
 			if (mIsRunning) {
@@ -553,6 +575,7 @@ public class MainActivity extends Activity implements LocationListener {
 			intent.putExtra("run", run);
 			// set to true when this is a newly captured route
 			intent.putExtra("isNewRoute", isNewRoute);
+			
 			
 			if (isNewRoute) {
 				
@@ -586,6 +609,7 @@ public class MainActivity extends Activity implements LocationListener {
 			}
 			
 			else {
+				intent.putExtra("routePosition", routePosition);
 				startActivity(intent);
 			}
 			

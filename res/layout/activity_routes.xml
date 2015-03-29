@@ -32,7 +32,7 @@
 	        android:scaleType="fitCenter" />
 
 	    <LinearLayout
-	        android:layout_width="match_parent"
+	        android:layout_width="220dp"
 	        android:layout_height="wrap_content"
 	        android:paddingLeft="@dimen/activity_horizontal_margin" >
 
@@ -40,7 +40,9 @@
 		        android:id="@+id/routeNameLabel"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:text="@string/routeName" >
+		        android:text="@string/routeName"
+		        android:onClick="onDeleteRouteButtonClick"
+		        android:clickable="true" >
 		    </TextView>
 		    <TextView
 		        android:id="@+id/routeName"
@@ -49,19 +51,13 @@
 		        android:text="" >
 		    </TextView>
 
-		    <Button
-		        android:id="@+id/buttonDeleteRoute"
-		        style="?android:attr/buttonStyleSmall"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:onClick="onDeleteRouteButtonClick"
-		        android:text="Delete" />
-
 	    </LinearLayout>
+
 	    <LinearLayout
-	        android:layout_width="match_parent"
+	        android:layout_width="220dp"
 	        android:layout_height="wrap_content"
 	        android:paddingLeft="@dimen/activity_horizontal_margin" >
+
 		    <TextView
 		        android:id="@+id/routeDistanceLabel"
 		        android:layout_width="wrap_content"
@@ -81,10 +77,12 @@
 		        android:text="@string/metres" >
 		    </TextView>
 	    </LinearLayout>
+
 	    <LinearLayout
-	        android:layout_width="match_parent"
+	        android:layout_width="220dp"
 	        android:layout_height="wrap_content"
 	        android:paddingLeft="@dimen/activity_horizontal_margin" >
+
 		    <TextView
 		        android:id="@+id/routeTimeLabel"
 		        android:layout_width="wrap_content"
@@ -128,6 +126,8 @@
 		    </TextView>
 	    </LinearLayout>
 	</LinearLayout>
+	
+    
 
 
 </LinearLayout>

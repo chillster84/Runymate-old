@@ -64,7 +64,7 @@ public class Route implements Parcelable {
 	}
 
 	private boolean isPointCloseToPathPoint(LatLng point, LatLng pathPoint, float accuracy) {
-		float threshold = accuracy < 15 ? 15 : accuracy; // hosseins code!!!!!!!!!!
+		float threshold = accuracy < 50 ? 50 : accuracy; // hosseins code!!!!!!!!!!
 		float[] result = { 0, 0 };
 		Location.distanceBetween(point.latitude, point.longitude,pathPoint.latitude, pathPoint.longitude,result);
 		LoginScreen.appendLog("checking point compared to previous route: ","= " + result[0]);

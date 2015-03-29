@@ -47,9 +47,9 @@ public class RunMetricsActivity extends Activity {
 		Builder builder = LatLngBounds.builder();
 		for (RunMetric runMetric : run.getRunMetrics()) {
 			LatLng point = runMetric.getLatlng();
-			// if (runMetric.getHeartRate() != 0.0) {
+			 if (runMetric.getHeartRate() != 0.0) {
 				gMap.addMarker(new MarkerOptions().position(point));
-			// }
+			 }
 			polylineOptions.add(point);
 			builder.include(point);
 		}

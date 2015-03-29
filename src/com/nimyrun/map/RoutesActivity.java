@@ -326,14 +326,13 @@ public class RoutesActivity extends Activity {
 	};
 
 	public void onDeleteRouteButtonClick(View v) {
-		pos = v.getId();
-		Toast.makeText(getApplicationContext(), "Deleting route #" + pos + ".",
-				Toast.LENGTH_SHORT).show();
+		//Toast.makeText(getApplicationContext(), "Deleting route #" + pos + ".",
+		//		Toast.LENGTH_SHORT).show();
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
 		deleteRoute(preferences, pos);
-		// redraw carousel
-		drawCarousel();
+		startActivity(getIntent()); 
+		finish();
 	}
 
 	private void deleteRoute(SharedPreferences preferences, int routePosition) {
