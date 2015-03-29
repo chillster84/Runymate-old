@@ -54,19 +54,20 @@ public class Route implements Parcelable {
 	/*
 	 * Checks if a point is on a given route
 	 */
-	public boolean isPointInRoute(LatLng point) {
+	public boolean isPointInRoute(LatLng point, float accuracy ) {
 		for (LatLng pathPoint : path) {
-			if (isPointCloseToPathPoint(point, pathPoint)) {
+			if (isPointCloseToPathPoint(point, pathPoint, accuracy)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean isPointCloseToPathPoint(LatLng point, LatLng pathPoint) {
-		float threshold = 20;
+	private boolean isPointCloseToPathPoint(LatLng point, LatLng pathPoint, float accuracy) {
+		float threshold = accuracy < 15 ? 15 : accuracy; // hosseins code!!!!!!!!!!
 		float[] result = { 0, 0 };
 		Location.distanceBetween(point.latitude, point.longitude,pathPoint.latitude, pathPoint.longitude,result);
+		LoginScreen.appendLog("checking point compared to previous route: ","= " + result[0]);
 		if (result[0] < threshold) {
 			return true;
 		} else {

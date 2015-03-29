@@ -318,6 +318,7 @@ public class MainActivity extends Activity implements LocationListener {
 	 * android.location.LocationListener#onLocationChanged(android.location.
 	 * Location)
 	 */
+	
 	@Override
 	public void onLocationChanged(Location newLocation) {
 		location = newLocation;
@@ -325,11 +326,27 @@ public class MainActivity extends Activity implements LocationListener {
 		if (!isNewRoute) {
 			LatLng point = new LatLng(location.getLatitude(),
 					location.getLongitude());
-			if (!route.isPointInRoute(point)) {
+			if (!route.isPointInRoute(point, location.getAccuracy())) {
 				// user is outside the route
 				Toast.makeText(this, "You went off route. Run terminated!",
 						Toast.LENGTH_SHORT).show();
-
+				
+				Ncl.removeBehavior(nclCallback, null, NclEventType.NCL_EVENT_ANY, nymiHandle);
+				LoginScreen.appendLog("offroute, ", "removed Nymi actions");
+				runIntervalTimer.cancel();
+				LoginScreen.appendLog("offroute, ", "cancelled interval timer");
+				if (mIsRunning) {
+		            unbindStepService();
+		            stopStepService();
+		            LoginScreen.appendLog("offroute, ", "stopping pedometer serv");
+		        }
+		        if (mQuitting) {
+		            mPedometerSettings.saveServiceRunningWithNullTimestamp(mIsRunning);
+		        }
+		        else {
+		            mPedometerSettings.saveServiceRunningWithTimestamp(mIsRunning);
+		        }
+				
 				Intent intent = new Intent(getApplicationContext(),
 						RouteSelectionActivity.class);
 				intent.putExtra("validated", true);
