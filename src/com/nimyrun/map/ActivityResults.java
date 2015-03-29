@@ -210,6 +210,7 @@ public class ActivityResults extends Activity {
 	public static void addNewRouteFromRun(SharedPreferences sharedPreferences,
 			Run run, String routeName) {
 		// create route from run
+		LoginScreen.appendLog("activityresults, ", "routeName = " + routeName);
 		Route route = new Route(routeName);
 		route.addRun(run);
 		for (RunMetric runMetric : run.getRunMetrics()) {

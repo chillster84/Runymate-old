@@ -278,7 +278,9 @@ public class RoutesActivity extends Activity {
 
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
+			LoginScreen.appendLog("got shraed prefs", "");
 			routes = retrieveRoutes(preferences);
+			LoginScreen.appendLog("retrieved routes", "");
 			pos = v.getId();
 
 			Route route = routes.get(pos);
@@ -299,6 +301,7 @@ public class RoutesActivity extends Activity {
 			TextView routeHeart = (TextView) findViewById(R.id.routeHeart);
 
 			routeName.setText(route.getName());
+			LoginScreen.appendLog("route name", " " + route.getName());
 			// we can write a method that gets the average or the best out of
 			// the runs
 			routeDistance.setText("" + route.getRuns().get(0).getDistance());

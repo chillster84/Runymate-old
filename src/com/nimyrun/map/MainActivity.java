@@ -508,29 +508,6 @@ public class MainActivity extends Activity implements LocationListener {
 	public void onButtonClick(View v) {
 		if (v.getId() == R.id.button01) {
 
-			if (isNewRoute) {
-				LoginScreen.appendLog("clicked Finish, ", "building alert");
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle("Good job!");
-				builder.setMessage("Please select a name for this run");
-
-				// Set up the input
-				final EditText input = new EditText(this);
-				builder.setView(input);
-
-				// Set up the buttons
-				builder.setPositiveButton("OK",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								m_Text = input.getText().toString();
-							}
-						});
-
-				builder.show();
-				LoginScreen.appendLog("clicked Finish, ", "built alert");
-			}
 			Run run = new Run(distance, (double) (count * LOCATION_MIN_TIME));
 			run.setRunMetrics(runMetrics);
 			LoginScreen.appendLog("clicked Finish, ", "set run metrics");
@@ -550,7 +527,7 @@ public class MainActivity extends Activity implements LocationListener {
 	            mPedometerSettings.saveServiceRunningWithTimestamp(mIsRunning);
 	        }
 			
-			Intent intent = new Intent(getApplicationContext(),
+			final Intent intent = new Intent(getApplicationContext(),
 					ActivityResults.class);
 			intent.putExtra("speedPoints", speedMap);
 			intent.putExtra("distance", distance);
@@ -559,10 +536,43 @@ public class MainActivity extends Activity implements LocationListener {
 			intent.putExtra("run", run);
 			// set to true when this is a newly captured route
 			intent.putExtra("isNewRoute", isNewRoute);
+			
 			if (isNewRoute) {
-				intent.putExtra("routeName", m_Text);
+				
+				mActivity.runOnUiThread(new Runnable() {
+					public void run() {
+				LoginScreen.appendLog("clicked Finish, ", "building alert");
+				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+				builder.setTitle("Good job!");
+				builder.setMessage("Please select a name for this run");
+
+				// Set up the input
+				final EditText input = new EditText(mActivity);
+				builder.setView(input);
+
+				// Set up the buttons
+				builder.setPositiveButton("OK",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								m_Text = input.getText().toString();
+								intent.putExtra("routeName", m_Text);
+								startActivity(intent);
+							}
+						});
+
+				builder.show();
+					}
+				});
+				LoginScreen.appendLog("clicked Finish, ", "built alert");
 			}
-			startActivity(intent);
+			
+			else {
+				startActivity(intent);
+			}
+			
+			
 		}
 
 	}

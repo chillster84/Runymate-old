@@ -99,6 +99,9 @@ public class Run implements Parcelable {
 				avg = runMetric.getHeartRate() + avg;
 			}
 		}
-		return LoginScreen.round((avg / i), 2);
+		if(i>0)
+			return LoginScreen.round((avg / i), 2);
+		else
+			return 0;
 	}
 }
