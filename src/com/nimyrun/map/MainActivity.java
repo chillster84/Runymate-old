@@ -509,15 +509,13 @@ public class MainActivity extends Activity implements LocationListener {
 		if (v.getId() == R.id.button01) {
 
 			if (isNewRoute) {
+				LoginScreen.appendLog("clicked Finish, ", "building alert");
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle("Title");
+				builder.setTitle("Good job!");
+				builder.setMessage("Please select a name for this run");
 
 				// Set up the input
 				final EditText input = new EditText(this);
-				// Specify the type of input expected; this, for example, sets
-				// the input as a password, and will mask the text
-				input.setInputType(InputType.TYPE_CLASS_TEXT
-						| InputType.TYPE_TEXT_VARIATION_PASSWORD);
 				builder.setView(input);
 
 				// Set up the buttons
@@ -531,11 +529,26 @@ public class MainActivity extends Activity implements LocationListener {
 						});
 
 				builder.show();
+				LoginScreen.appendLog("clicked Finish, ", "built alert");
 			}
 			Run run = new Run(distance, (double) (count * LOCATION_MIN_TIME));
 			run.setRunMetrics(runMetrics);
+			LoginScreen.appendLog("clicked Finish, ", "set run metrics");
 			Ncl.removeBehavior(nclCallback, null, NclEventType.NCL_EVENT_ANY, nymiHandle);
+			LoginScreen.appendLog("clicked Finish, ", "removed Nymi actions");
 			runIntervalTimer.cancel();
+			LoginScreen.appendLog("clicked Finish, ", "cancelled interval timer");
+			if (mIsRunning) {
+	            unbindStepService();
+	            stopStepService();
+	            LoginScreen.appendLog("clicked Finish, ", "stopping pedometer serv");
+	        }
+	        if (mQuitting) {
+	            mPedometerSettings.saveServiceRunningWithNullTimestamp(mIsRunning);
+	        }
+	        else {
+	            mPedometerSettings.saveServiceRunningWithTimestamp(mIsRunning);
+	        }
 			
 			Intent intent = new Intent(getApplicationContext(),
 					ActivityResults.class);
@@ -665,9 +678,6 @@ public class MainActivity extends Activity implements LocationListener {
 			heartMap.put(count + "", heartbeat);
 
 		}
-		
-		Toast.makeText(this, "SAMPLED! Speed = " + speed,
-				Toast.LENGTH_SHORT).show();
 	}
 	
 	private void addRunMetric(double currentHeartRate, int totalStepsTaken) {
@@ -680,8 +690,8 @@ public class MainActivity extends Activity implements LocationListener {
 			double currentSpeed = speed;
 			LoginScreen.appendLog("addrunmetric", "adding heart rate "+ currentHeartRate + " as newRunMetric");
 			LoginScreen.appendLog("addrunmetric", "with total steps = "+ totalStepsTaken);
-			RunMetric newRunMetric = new RunMetric(currentPosition, currentSpeed,
-					currentHeartRate, totalStepsTaken, currentTimestamp);
+			RunMetric newRunMetric = new RunMetric(currentPosition, LoginScreen.round(currentSpeed, 2),
+					LoginScreen.round(currentHeartRate, 2), totalStepsTaken, LoginScreen.round(currentTimestamp,2));
 			runMetrics.add(newRunMetric);
 		}
 		LoginScreen.appendLog("in addrunmetric", " leaving");
@@ -710,9 +720,9 @@ public class MainActivity extends Activity implements LocationListener {
 			
 			speed = newDistance / (LOCATION_MIN_TIME * errorFactor);
 			
-			speedField.setText((double) Math.round(speed * 100) / 100 + "");
-			heartbeat = 150 + (count / 5 * 10);
-			heartField.setText(heartbeat + "");
+			speedField.setText(LoginScreen.round(((double) Math.round(speed * 100) / 100), 2) + "");
+			//heartbeat = 150 + (count / 5 * 10);
+			heartField.setText(LoginScreen.round(heart_rate, 2) + "");
 			
 			setAnimation(speedBlockerImage, speed);
 			setAnimation(heartPeakImage, heartbeat);

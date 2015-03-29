@@ -46,6 +46,14 @@ public class RoutesActivity extends Activity {
 
 	protected int nymiHandle;
 	boolean validated = false;
+	
+	TextView routeNameLabel;
+	TextView routeDistanceLabel;
+	TextView routeTimeLabel;
+	TextView routeHeartLabel;
+	TextView metres;
+	TextView minutes;
+	TextView bpm;	
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +76,29 @@ public class RoutesActivity extends Activity {
         // Get reference to carousel container
         mCarouselContainer = (LinearLayout) findViewById(R.id.carousel);
 		////////////////////////////////////////////////////
-
+        
+        routeImageZoom = (ImageView) findViewById(R.id.routeImageZoom);
+        final DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        routeImageZoom.getLayoutParams().height = displayMetrics.widthPixels;
+        routeImageZoom.setBackgroundResource(R.drawable.bg_sel_route);
+        
+        routeNameLabel = (TextView) findViewById(R.id.routeNameLabel);
+		routeDistanceLabel = (TextView) findViewById(R.id.routeDistanceLabel);
+		routeTimeLabel = (TextView) findViewById(R.id.routeTimeLabel);
+		routeHeartLabel = (TextView) findViewById(R.id.routeHeartLabel);
+		metres = (TextView) findViewById(R.id.metres);
+		minutes = (TextView) findViewById(R.id.minutes);
+		bpm = (TextView) findViewById(R.id.bpm);
+		
+		routeNameLabel.setVisibility(View.INVISIBLE);
+		routeDistanceLabel.setVisibility(View.INVISIBLE);
+		routeTimeLabel.setVisibility(View.INVISIBLE);
+		routeHeartLabel.setVisibility(View.INVISIBLE);
+		metres.setVisibility(View.INVISIBLE);
+		minutes.setVisibility(View.INVISIBLE);
+		bpm.setVisibility(View.INVISIBLE);
+		
 		// This is the main location of routes
 		// This should get loaded from device storage
 		// Using StoreRoutes.java > RetrieveRoutes()
@@ -254,7 +284,15 @@ public class RoutesActivity extends Activity {
 			Route route = routes.get(pos);
 			//int[] loc = {0, 0};
 			
-			routeImageZoom = (ImageView) findViewById(R.id.routeImageZoom);
+			//show visible the labels
+			routeNameLabel.setVisibility(View.VISIBLE);
+			routeDistanceLabel.setVisibility(View.VISIBLE);
+			routeTimeLabel.setVisibility(View.VISIBLE);
+			routeHeartLabel.setVisibility(View.VISIBLE);
+			metres.setVisibility(View.VISIBLE);
+			minutes.setVisibility(View.VISIBLE);
+			bpm.setVisibility(View.VISIBLE);
+			
 			TextView routeName = (TextView) findViewById(R.id.routeName);
 			TextView routeDistance = (TextView) findViewById(R.id.routeDistance);
 			TextView routeTime = (TextView) findViewById(R.id.routeTime);
@@ -293,12 +331,6 @@ public class RoutesActivity extends Activity {
 					startActivity(intent);
 				}
 			});
-			//v.getLocationOnScreen(loc);
-			//mCarouselContainer.setScrollX(halfScreenWidth - loc[0]);
-			//mCarouselContainer.offsetLeftAndRight(imageWidth * v.getId());
-			//mCarouselContainer.setScrollX(imageWidth * v.getId());
-			Toast.makeText(getApplicationContext(),
-					"ID: " + v.getId(), Toast.LENGTH_SHORT).show();
 		}
 	};
 

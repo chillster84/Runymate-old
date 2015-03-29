@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#272727" >
+    android:orientation="vertical" >
 
     <!-- Container view to scroll horizontally which gives the carousel effect -->
     <HorizontalScrollView
@@ -30,8 +29,7 @@
 	        android:id="@+id/routeImageZoom"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:scaleType="fitCenter"
-	        android:onClick="onButtonClick" />
+	        android:scaleType="fitCenter" />
 
 	    <LinearLayout
 	        android:layout_width="match_parent"
@@ -39,16 +37,15 @@
 	        android:paddingLeft="@dimen/activity_horizontal_margin" >
 
 		    <TextView
+		        android:id="@+id/routeNameLabel"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
-		        android:text="Route name: " >
+		        android:text="@string/routeName" >
 		    </TextView>
 		    <TextView
 		        android:id="@+id/routeName"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
 		        android:text="" >
 		    </TextView>
 	    </LinearLayout>
@@ -57,23 +54,22 @@
 	        android:layout_height="wrap_content"
 	        android:paddingLeft="@dimen/activity_horizontal_margin" >
 		    <TextView
+		        android:id="@+id/routeDistanceLabel"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
-		        android:text="Distance: " >
+		        android:text="@string/distance" >
 		    </TextView>
 		    <TextView
 		        android:id="@+id/routeDistance"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
 		        android:text="" >
 		    </TextView>
 		    <TextView
+		        android:id="@+id/metres"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
-		        android:text=" m" >
+		        android:text="@string/metres" >
 		    </TextView>
 	    </LinearLayout>
 	    <LinearLayout
@@ -81,23 +77,22 @@
 	        android:layout_height="wrap_content"
 	        android:paddingLeft="@dimen/activity_horizontal_margin" >
 		    <TextView
+		        android:id="@+id/routeTimeLabel"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
-		        android:text="Best time: " >
+		        android:text="@string/bestTime" >
 		    </TextView>
 		    <TextView
 		        android:id="@+id/routeTime"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
 		        android:text="" >
 		    </TextView>
 		    <TextView
+		        android:id="@+id/minutes"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
-		        android:text=" min" >
+		        android:text="@string/min" >
 		    </TextView>
 	    </LinearLayout>
 	    <LinearLayout
@@ -105,23 +100,22 @@
 	        android:layout_height="wrap_content"
 	        android:paddingLeft="@dimen/activity_horizontal_margin" >
 		    <TextView
+		        android:id="@+id/routeHeartLabel"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
-		        android:text="Avg heart rate (best run): " >
+		        android:text="@string/avgHeartRateBest" >
 		    </TextView>
 		    <TextView
 		        android:id="@+id/routeHeart"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
 		        android:text="" >
 		    </TextView>
 		    <TextView
+		        android:id="@+id/bpm"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:textColor="#ffffff"
-		        android:text=" bpm" >
+		        android:text="@string/bpm" >
 		    </TextView>
 	    </LinearLayout>
 	</LinearLayout>

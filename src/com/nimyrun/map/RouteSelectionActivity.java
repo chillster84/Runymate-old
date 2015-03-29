@@ -30,8 +30,6 @@ public class RouteSelectionActivity extends Activity {
         {
             nymiHandle = b.getInt("nymiHandle");
             validated = b.getBoolean("validated");
-            Toast.makeText(getApplicationContext(),
-					"nymiHandle = " + nymiHandle, Toast.LENGTH_SHORT).show();
             LoginScreen.appendLog("onCreate", "nymiHandle passed over to routeselectionactivity is " + nymiHandle);
         }
 	}

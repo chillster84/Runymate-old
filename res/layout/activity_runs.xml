@@ -28,7 +28,7 @@
             android:layout_gravity="left|center_vertical"
             android:layout_marginLeft="10dip"
             android:layout_weight="1"
-            android:text="Distance Travelled"
+            android:text="Average Heart Rate"
             android:textSize="18dip"
             android:textStyle="bold" />
 

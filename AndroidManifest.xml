@@ -60,12 +60,12 @@
         </activity>
         <activity
             android:name=".RoutesActivity"
-            android:label="@string/title_activity_routes"
+            android:label="@string/app_name" 
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".RunsActivity"
-            android:label="@string/title_activity_runs"
+            android:label="@string/app_name" 
             android:screenOrientation="portrait" >
         </activity>
 
@@ -75,12 +75,12 @@
 
         <activity
             android:name=".RunMetricsActivity"
-            android:label="@string/title_activity_run_metrics"
+            android:label="@string/app_name" 
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".RouteSelectionActivity"
-            android:label="@string/title_activity_route_selection" 
+            android:label="@string/app_name"
             android:screenOrientation="portrait">
         </activity>
 

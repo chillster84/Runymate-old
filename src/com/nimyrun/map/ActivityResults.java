@@ -66,11 +66,11 @@ public class ActivityResults extends Activity {
 				.getSerializableExtra("speedPoints");
 		List speedList = new ArrayList(speedMap.values());
 
-		double distance = getIntent().getDoubleExtra("distance", 0);
+		double distance = LoginScreen.round(getIntent().getDoubleExtra("distance", 0), 2);
 		TextView distanceField = (TextView) findViewById(R.id.distance);
 		distanceField.setText(distance + " m");
 
-		double time = getIntent().getDoubleExtra("time", 0);
+		double time = LoginScreen.round(getIntent().getDoubleExtra("time", 0), 2);
 		TextView timeField = (TextView) findViewById(R.id.time);
 		timeField.setText(time / 60 + " min");
 

@@ -41,11 +41,12 @@ public class RunsAdapter extends BaseAdapter {
 			vi = inflater.inflate(R.layout.row_layout_2, null);
 
 		TextView text = (TextView) vi.findViewById(R.id.text2);
-		TextView distanceText = (TextView) vi.findViewById(R.id.text3);
+		TextView heartRateText = (TextView) vi.findViewById(R.id.text3);
 		TextView timeText = (TextView) vi.findViewById(R.id.text4);
 		Run run = runs.get(position);
+		
 		text.setText(position+1 + "");
-		distanceText.setText(run.getDistance() + " m");
+		heartRateText.setText(run.getAverageHeartRate() + " bpm");
 		timeText.setText(run.getTime() + " min");
 
 		return vi;
