@@ -225,6 +225,10 @@ public class RoutesActivity extends Activity {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
+		drawCarousel();
+	}
+
+	private void drawCarousel() {
 		imageLoader = new ImageLoader(getApplicationContext());
 
 		SharedPreferences preferences = PreferenceManager
@@ -239,31 +243,15 @@ public class RoutesActivity extends Activity {
         // Populate the carousel with items
         ImageView imageItem;
 		for (int i = 0; i < routes.size(); i++) {
-
             // Create new ImageView
             imageItem = new ImageView(this);
-            
 			String imageUrl = getRouteUrl(routes.get(i));
-
 			imageLoader.DisplayImage(imageUrl, imageItem, i);
-
-            // Set the shadow background
-            //imageItem.setBackgroundResource(R.drawable.shadow);
-
-            // Set the image view resource
-			// int image = puppyResourcesTypedArray.getResourceId(i, -1);
-			// imageItem.setImageResource(image);
-
-            // Set the size of the image view to the previously computed value
-			// imageItem.setLayoutParams(new
-			// LinearLayout.LayoutParams(imageWidth, imageWidth));
-
-            /// Add image view to the carousel container
             mCarouselContainer.addView(imageItem);
             mCarouselContainer.getChildAt(i).setPadding(15, 15, 15, 15);
             mCarouselContainer.getChildAt(i).setOnClickListener(btn_click);
         }
-    }
+	}
 	/////////////////////////////////
 	
 	private ImageView routeImageZoom;
@@ -336,6 +324,22 @@ public class RoutesActivity extends Activity {
 			});
 		}
 	};
+
+	public void onDeleteRouteButtonClick(View v) {
+		pos = v.getId();
+		Toast.makeText(getApplicationContext(), "Deleting route #" + pos + ".",
+				Toast.LENGTH_SHORT).show();
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		deleteRoute(preferences, pos);
+		// redraw carousel
+		drawCarousel();
+	}
+
+	private void deleteRoute(SharedPreferences preferences, int routePosition) {
+		routes.remove(routePosition);
+		storeRoutes(preferences, routes);
+	}
 
 	public String getRouteUrl(Route route) {
 		String baseUrl = "https://maps.googleapis.com/maps/api/staticmap?path=color:0x0000ff%7Cweight:5%7C";
