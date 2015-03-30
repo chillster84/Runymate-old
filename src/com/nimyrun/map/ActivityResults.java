@@ -83,8 +83,10 @@ public class ActivityResults extends Activity {
 		speedPlot = (XYPlot) findViewById(R.id.speedPlot);
 		heartPlot = (XYPlot) findViewById(R.id.heartPlot);
 
-		drawPlot(speedList, speedPlot, 5);
-		drawPlot(heartList, heartPlot, 5);
+		double x_increment = time / speedList.size();
+		
+		drawPlot(speedList, speedPlot, (int) x_increment);
+		drawPlot(heartList, heartPlot, (int) x_increment);
 	}
 	
 	private void drawPlot(List list, XYPlot plot, int xIncrement) {
@@ -118,7 +120,7 @@ public class ActivityResults extends Activity {
 			// Reduce the number of range labels
 			plot.setTicksPerRangeLabel(3);
 			plot.getGraphWidget().setDomainLabelOrientation(0); // Default is -45
-			plot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 5);
+			plot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, xIncrement);
 			plot.getLegendWidget().setVisible(false);
 	}
 
