@@ -72,7 +72,7 @@ public class ActivityResults extends Activity {
 
 		double time = LoginScreen.round(getIntent().getDoubleExtra("time", 0), 2);
 		TextView timeField = (TextView) findViewById(R.id.time);
-		timeField.setText(LoginScreen.round(time/60000, 2) + " min");
+		timeField.setText(LoginScreen.round(time, 2) + " min");
 		
 		
 		int steps = getIntent().getIntExtra("steps", 0);

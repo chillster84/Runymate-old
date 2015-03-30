@@ -548,7 +548,7 @@ public class MainActivity extends Activity implements LocationListener {
 		if (v.getId() == R.id.button01) {
 
 			elapsedTime = System.currentTimeMillis() - startTime;
-			Run run = new Run(distance, LoginScreen.round(elapsedTime, 2));
+			Run run = new Run(distance, LoginScreen.round(elapsedTime/60000, 2));
 			run.setRunMetrics(runMetrics);
 			
 			LoginScreen.appendLog("clicked Finish, ", "set run metrics");
@@ -575,7 +575,7 @@ public class MainActivity extends Activity implements LocationListener {
 					ActivityResults.class);
 			intent.putExtra("speedPoints", speedMap);
 			intent.putExtra("distance", distance);
-			intent.putExtra("time", LoginScreen.round(elapsedTime, 2));
+			intent.putExtra("time", LoginScreen.round(elapsedTime/60000, 2));
 			intent.putExtra("steps", mStepValue);
 			intent.putExtra("heartPoints", heartMap);
 			intent.putExtra("run", run);
