@@ -26,7 +26,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.text.InputType;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
@@ -344,7 +343,7 @@ public class MainActivity extends Activity implements LocationListener {
 	public void onLocationChanged(Location newLocation) {
 		location = newLocation;
 		LoginScreen.appendLog("onlocationchanged", " = " + newLocation.toString());
-		if (!isNewRoute) {
+		if (!isNewRoute && location.getAccuracy() < 15) {
 			LatLng point = new LatLng(location.getLatitude(),
 					location.getLongitude());
 			if (!route.isPointInRoute(point, location.getAccuracy())) {
