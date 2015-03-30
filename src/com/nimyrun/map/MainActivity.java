@@ -130,6 +130,8 @@ public class MainActivity extends Activity implements LocationListener {
     CountDownTimer runIntervalTimer;
 	Route route;
 	private String m_Text = "";
+	
+	double startTime, elapsedTime;
 
 	/*
 	 * Set actions for initial creation of activity.
@@ -273,6 +275,8 @@ public class MainActivity extends Activity implements LocationListener {
         }
         
         mPedometerSettings.clearServiceRunning();
+        
+        startTime = System.currentTimeMillis();
 		
 		LoginScreen.appendLog("End of oncreate"," Here");
 	}
@@ -544,7 +548,8 @@ public class MainActivity extends Activity implements LocationListener {
 	public void onButtonClick(View v) {
 		if (v.getId() == R.id.button01) {
 
-			Run run = new Run(distance, (double) (count * LOCATION_MIN_TIME));
+			elapsedTime = System.currentTimeMillis() - startTime;
+			Run run = new Run(distance, LoginScreen.round(elapsedTime, 2));
 			run.setRunMetrics(runMetrics);
 			
 			LoginScreen.appendLog("clicked Finish, ", "set run metrics");
@@ -553,6 +558,7 @@ public class MainActivity extends Activity implements LocationListener {
 			locationManager.removeUpdates(this);
 			locationManager = null;
 			runIntervalTimer.cancel();
+			
 			LoginScreen.appendLog("clicked Finish, ", "cancelled interval timer");
 			if (mIsRunning) {
 	            unbindStepService();
@@ -570,7 +576,8 @@ public class MainActivity extends Activity implements LocationListener {
 					ActivityResults.class);
 			intent.putExtra("speedPoints", speedMap);
 			intent.putExtra("distance", distance);
-			intent.putExtra("time", (double) (count * LOCATION_MIN_TIME));
+			intent.putExtra("time", LoginScreen.round(elapsedTime, 2));
+			intent.putExtra("steps", mStepValue);
 			intent.putExtra("heartPoints", heartMap);
 			intent.putExtra("run", run);
 			// set to true when this is a newly captured route
@@ -723,7 +730,7 @@ public class MainActivity extends Activity implements LocationListener {
 
 		if (speed < 15) { // Fastest recorded running speed is about 12 m/s
 			//add a runMetric without a heart rate
-			addRunMetric(0.0, 0);
+			addRunMetric(0.0, mStepValue);
 
 			speedMap.put(count + "", speed);
 			heartMap.put(count + "", heart_rate);
@@ -737,12 +744,12 @@ public class MainActivity extends Activity implements LocationListener {
 			LatLng currentPosition = new LatLng(location.getLatitude(),
 					location.getLongitude());
 			LoginScreen.appendLog("in addrunmetric", "after currentPos");
-			double currentTimestamp = System.currentTimeMillis();
+			elapsedTime = System.currentTimeMillis() - startTime;
 			double currentSpeed = speed;
 			LoginScreen.appendLog("addrunmetric", "adding heart rate "+ currentHeartRate + " as newRunMetric");
 			LoginScreen.appendLog("addrunmetric", "with total steps = "+ totalStepsTaken);
 			RunMetric newRunMetric = new RunMetric(currentPosition, LoginScreen.round(currentSpeed, 2),
-					LoginScreen.round(currentHeartRate, 2), totalStepsTaken, LoginScreen.round(currentTimestamp,2));
+					LoginScreen.round(currentHeartRate, 2), totalStepsTaken, LoginScreen.round(elapsedTime,2));
 			runMetrics.add(newRunMetric);
 		}
 		LoginScreen.appendLog("in addrunmetric", " leaving");
@@ -776,7 +783,7 @@ public class MainActivity extends Activity implements LocationListener {
 			heartField.setText(LoginScreen.round(heart_rate, 2) + "");
 			
 			setAnimation(speedBlockerImage, speed);
-			setAnimation(heartPeakImage, heartbeat);
+			setAnimation(heartPeakImage, LoginScreen.round(heart_rate, 2));
 			LoginScreen.appendLog("updatelocation()", "set animations");
 			
 			if (speed < 12 && accuracy < 15) { // If latest detected location makes sense

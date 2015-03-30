@@ -72,8 +72,13 @@ public class ActivityResults extends Activity {
 
 		double time = LoginScreen.round(getIntent().getDoubleExtra("time", 0), 2);
 		TextView timeField = (TextView) findViewById(R.id.time);
-		timeField.setText(time / 60 + " min");
-
+		timeField.setText(LoginScreen.round(time/60000, 2) + " min");
+		
+		
+		int steps = getIntent().getIntExtra("steps", 0);
+		TextView stepsField = (TextView) findViewById(R.id.steps);
+		stepsField.setText(steps + " steps");
+		
 		HashMap<String, Number> heartMap = (HashMap<String, Number>) getIntent()
 				.getSerializableExtra("heartPoints");
 		List heartList = new ArrayList(heartMap.values());
