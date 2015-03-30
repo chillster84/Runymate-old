@@ -154,38 +154,49 @@ public class RoutesActivity extends Activity {
 		// extra fake routes
 		Route routeB = new Route("Route B");
 		Route routeC = new Route("Route C");
-		Route routeD = new Route("Route D");
-		Route routeE = new Route("Route E");
 		routeB.setPath(routeA.getPath());
 		routeC.setPath(routeA.getPath());
-		routeD.setPath(routeA.getPath());
-		routeE.setPath(routeA.getPath());
 
 		// add fake runs
-		routeA.setRuns(getMockRuns(5));
+		routeA.setRuns(getMockRuns(3));
 		routeB.setRuns(getMockRuns(4));
-		routeC.setRuns(getMockRuns(3));
-		routeD.setRuns(getMockRuns(2));
-		routeE.setRuns(getMockRuns(1));
+		routeC.setRuns(getMockRuns(5));
 
 		// put in list
 		routes.add(routeA);
 		routes.add(routeB);
 		routes.add(routeC);
-		routes.add(routeD);
-		routes.add(routeE);
 		return routes;
 	}
 
 	private static List<Run> getMockRuns(int n) {
 		List<Run> runs = new ArrayList<Run>();
 
-		// add n runs
-		while (n != 0) {
+		if(n==5) {
+			// add n runs
 			runs.add(mockRun());
-			n--;
+			runs.add(mockRun2());
+			runs.add(mockRun3());
+			runs.add(mockRun2());
+			runs.add(mockRun3());
+			return runs;
 		}
-		return runs;
+		else if (n==4) {
+			// add n runs
+			while (n != 0) {
+				runs.add(mockRun2());
+				runs.add(mockRun3());
+				n=n-2;
+			}
+			return runs;
+		}
+		else {
+			runs.add(mockRun());
+			runs.add(mockRun2());
+			runs.add(mockRun3());
+			return runs;
+		}
+		
 	}
 
 	private static Run mockRun() {
@@ -202,20 +213,127 @@ public class RoutesActivity extends Activity {
 		routeA.addPoint(43.6612275, -79.39416666);
 		routeA.addPoint(43.66151856, -79.39409156);
 
-		Run run = new Run(520, 12);
-		int i = 0;
-		for (LatLng point : routeA.getPath()) {
-			i++;
-			if (i % 2 == 0) {
-				run.addRunMetrics(new RunMetric(point, 22.4 + i, 156 + i,
-						0 + i, 0 + i));
-			} else {
-				run.addRunMetrics(new RunMetric(point, 22.4 + i, 0.0, 0 + i,
-						0 + i));
-			}
+		Run run = new Run(625, 8);
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(0), 2.4, 171,
+				1427,8));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(1), 2.5, 0,
+				379, 2));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(2), 2.5, 126,
+						379, 2));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(3), 2.7, 0,
+				824, 4));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(4), 2.7, 147,
+				824, 4));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(5), 2.8, 0,
+				1125, 6));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(6), 2.8, 173,
+				1125, 6));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(7), 2.8, 0,
+				1125, 6));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(8), 2.4, 171,
+				1427,8));
+		
+		return run;
+	}
+	
+	private static Run mockRun2() {
+		Route routeA = new Route("Route A");
 
-		}
+		// add points
+		routeA.addPoint(43.66151856, -79.39409156);
+		routeA.addPoint(43.66214725, -79.39433832);
+		routeA.addPoint(43.66246547, -79.39487476);
+		routeA.addPoint(43.66230248, -79.3957438);
+		routeA.addPoint(43.66184455, -79.39619441);
+		routeA.addPoint(43.66108391, -79.395894);
+		routeA.addPoint(43.66099077, -79.3951859);
+		routeA.addPoint(43.6612275, -79.39416666);
+		routeA.addPoint(43.66151856, -79.39409156);
 
+		Run run = new Run(625, 7.5);
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(0), 2.9, 177,
+				1995,7.5));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(1), 2.7, 0,
+				412, 1.75));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(2), 2.7, 139,
+						412, 1.75));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(3), 2.7, 0,
+				824, 4));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(4), 3.3, 165,
+				940, 3.5));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(5), 2.8, 0,
+				1125, 6));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(6), 3.7, 182,
+				1525, 6));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(7), 2.8, 0,
+				1125, 6));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(8), 2.9, 177,
+				1995,7.5));
+		
+		return run;
+	}
+	
+	private static Run mockRun3() {
+		Route routeA = new Route("Route A");
+
+		// add points
+		routeA.addPoint(43.66151856, -79.39409156);
+		routeA.addPoint(43.66214725, -79.39433832);
+		routeA.addPoint(43.66246547, -79.39487476);
+		routeA.addPoint(43.66230248, -79.3957438);
+		routeA.addPoint(43.66184455, -79.39619441);
+		routeA.addPoint(43.66108391, -79.395894);
+		routeA.addPoint(43.66099077, -79.3951859);
+		routeA.addPoint(43.6612275, -79.39416666);
+		routeA.addPoint(43.66151856, -79.39409156);
+
+		Run run = new Run(625, 7);
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(0), 3.4, 181,
+				2074,7));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(1), 2.7, 0,
+				412, 1.75));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(2), 3.0, 144,
+						427, 2));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(3), 2.7, 0,
+				824, 3.5));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(4), 3.4, 160,
+				1024, 3.5));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(5), 2.8, 0,
+				1125, 4.75));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(6), 3.7, 179,
+				1599, 4.75));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(7), 2.8, 0,
+				1125, 4.75));
+		
+		run.addRunMetrics(new RunMetric(routeA.getPath().get(8), 3.4, 181,
+				2074,7));
+		
 		return run;
 	}
 	
@@ -288,14 +406,24 @@ public class RoutesActivity extends Activity {
 			TextView routeTime = (TextView) findViewById(R.id.routeTime);
 			TextView routeHeart = (TextView) findViewById(R.id.routeHeart);
 
-			routeName.setText(route.getName());
+			routeName.setText(" " + route.getName());
 			LoginScreen.appendLog("route name", " " + route.getName());
 			// we can write a method that gets the average or the best out of
 			// the runs
-			routeDistance.setText("" + route.getRuns().get(0).getDistance());
-			routeTime.setText("" + route.getRuns().get(0).getTime());
-			routeHeart.setText(""
-					+ route.getRuns().get(0).getAverageHeartRate());
+			//distance is the same for the same route
+			routeDistance.setText(" " + route.getRuns().get(0).getDistance());
+			
+			//want to show best time, go through runs to find lowest time. get avg hr from best run
+			double bestTime = route.getRuns().get(0).getTime();
+			double bestHR = route.getRuns().get(0).getAverageHeartRate();
+			for (Run run : route.getRuns()) {
+				if (run.getTime() < bestTime) {
+					bestTime = run.getTime();
+					bestHR = run.getAverageHeartRate();
+				}
+			}
+			routeTime.setText(" " + bestTime);
+			routeHeart.setText(" " + bestHR);
 
 			String url = getRouteUrl(route);
 			imageLoader.DisplayImage(url, routeImageZoom);

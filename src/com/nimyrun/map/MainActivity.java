@@ -726,7 +726,7 @@ public class MainActivity extends Activity implements LocationListener {
 			addRunMetric(0.0, 0);
 
 			speedMap.put(count + "", speed);
-			heartMap.put(count + "", heartbeat);
+			heartMap.put(count + "", heart_rate);
 
 		}
 	}
