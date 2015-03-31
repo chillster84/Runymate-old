@@ -65,16 +65,26 @@ public class ActivityResults extends Activity {
 		HashMap<String, Number> speedMap = (HashMap<String, Number>) getIntent()
 				.getSerializableExtra("speedPoints");
 		List speedList = new ArrayList(speedMap.values());
+		
+		LoginScreen.appendLog("results, ", "speedmap size = " + speedList.size());
 
 		double distance = LoginScreen.round(getIntent().getDoubleExtra("distance", 0), 2);
 		TextView distanceField = (TextView) findViewById(R.id.distance);
 		distanceField.setText(distance + " m");
 
-		double time = LoginScreen.round(getIntent().getDoubleExtra("time", 0), 2);
+		double time = LoginScreen.round(getIntent().getDoubleExtra("totalTime", 0), 2);
 		TextView timeField = (TextView) findViewById(R.id.time);
 		if(time<10) {
 			timeField.setText("0" + (int)LoginScreen.round(time, 2) + ":" + "00");
 		}
+		
+		double countTime = LoginScreen.round(getIntent().getDoubleExtra("countTime", 0), 2);
+		
+		if (countTime < speedList.size()) {
+			countTime = speedList.size();
+		}
+		LoginScreen.appendLog("results, ", "time = " + time);
+		LoginScreen.appendLog("results, ", "countTime = " + countTime);
 		
 		
 		
@@ -85,16 +95,19 @@ public class ActivityResults extends Activity {
 		HashMap<String, Number> heartMap = (HashMap<String, Number>) getIntent()
 				.getSerializableExtra("heartPoints");
 		List heartList = new ArrayList(heartMap.values());
+		
+		LoginScreen.appendLog("results, ", "heartlist size = " + heartList.size());
 		TextView heartField = (TextView) findViewById(R.id.heart);
 		heartField.setText(getListAverage(heartList) + " bpm");
 		
 		speedPlot = (XYPlot) findViewById(R.id.speedPlot);
 		heartPlot = (XYPlot) findViewById(R.id.heartPlot);
 
-		double x_increment = time / speedList.size();
+		double x_increment_speed = countTime / speedList.size();
+		double x_increment_hr = countTime / heartList.size();
 		
-		drawPlot(speedList, speedPlot, (int) x_increment);
-		drawPlot(heartList, heartPlot, (int) x_increment);
+		drawPlot(speedList, speedPlot, (int) x_increment_speed);
+		drawPlot(heartList, heartPlot, (int) x_increment_hr);
 	}
 	
 	private void drawPlot(List list, XYPlot plot, int xIncrement) {

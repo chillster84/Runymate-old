@@ -357,8 +357,12 @@ public class MainActivity extends Activity implements LocationListener {
 				
 				Ncl.removeBehavior(nclCallback, null, NclEventType.NCL_EVENT_ANY, nymiHandle);
 				LoginScreen.appendLog("offroute, ", "removed Nymi actions");
-				runIntervalTimer.cancel();
-				LoginScreen.appendLog("offroute, ", "cancelled interval timer");
+				if(!first) {
+					runIntervalTimer.cancel();
+					LoginScreen.appendLog("offroute, ", "cancelled interval timer");
+				}
+				
+				LoginScreen.appendLog("offroute", mIsRunning + " mis running");
 				if (mIsRunning) {
 		            unbindStepService();
 		            stopStepService();
@@ -366,9 +370,6 @@ public class MainActivity extends Activity implements LocationListener {
 		        }
 		        if (mQuitting) {
 		            mPedometerSettings.saveServiceRunningWithNullTimestamp(mIsRunning);
-		        }
-		        else {
-		            mPedometerSettings.saveServiceRunningWithTimestamp(mIsRunning);
 		        }
 				
 				Intent intent = new Intent(getApplicationContext(),
@@ -577,7 +578,8 @@ public class MainActivity extends Activity implements LocationListener {
 					ActivityResults.class);
 			intent.putExtra("speedPoints", speedMap);
 			intent.putExtra("distance", distance);
-			intent.putExtra("time", LoginScreen.round(elapsedTime/60000, 2));
+			intent.putExtra("totalTime", LoginScreen.round(elapsedTime/60000, 2));
+			intent.putExtra("countTime", (double) (count * LOCATION_MIN_TIME));
 			intent.putExtra("steps", mStepValue);
 			intent.putExtra("heartPoints", heartMap);
 			intent.putExtra("run", run);
@@ -734,7 +736,6 @@ public class MainActivity extends Activity implements LocationListener {
 			addRunMetric(0.0, mStepValue);
 
 			speedMap.put(count + "", speed);
-			heartMap.put(count + "", heart_rate);
 
 		}
 	}
@@ -750,7 +751,7 @@ public class MainActivity extends Activity implements LocationListener {
 			LoginScreen.appendLog("addrunmetric", "adding heart rate "+ currentHeartRate + " as newRunMetric");
 			LoginScreen.appendLog("addrunmetric", "with total steps = "+ totalStepsTaken);
 			RunMetric newRunMetric = new RunMetric(currentPosition, LoginScreen.round(currentSpeed, 2),
-					LoginScreen.round(currentHeartRate, 2), totalStepsTaken, LoginScreen.round(elapsedTime,2));
+					LoginScreen.round(currentHeartRate, 2), totalStepsTaken, LoginScreen.round(elapsedTime/60000,2));
 			runMetrics.add(newRunMetric);
 		}
 		LoginScreen.appendLog("in addrunmetric", " leaving");
@@ -926,6 +927,8 @@ public class MainActivity extends Activity implements LocationListener {
              diff_avg = diff_sum/divisor;
              
              heart_rate = 250.0*60.0/diff_avg;
+
+ 			heartMap.put(count + "", heart_rate);
              
              LoginScreen.appendLog("Possible heart rate: ", heart_rate + "\n");
              
