@@ -741,7 +741,7 @@ public class MainActivity extends Activity implements LocationListener {
 	
 	private void addRunMetric(double currentHeartRate, int totalStepsTaken) {
 		LoginScreen.appendLog("in addrunmetric", " adding " + currentHeartRate);
-		if(location!=null) {
+		if (location != null && location.getAccuracy() < 15) {
 			LatLng currentPosition = new LatLng(location.getLatitude(),
 					location.getLongitude());
 			LoginScreen.appendLog("in addrunmetric", "after currentPos");
@@ -765,8 +765,9 @@ public class MainActivity extends Activity implements LocationListener {
 			}
 			double newDistance = 0;
 			LoginScreen.appendLog("updatelocation()", "location not null anymore?");
-			double accuracy = location.getAccuracy();
-			LoginScreen.appendLog("updatelocation()", "accuracy = " + accuracy);
+			// double accuracy = location.getAccuracy();
+			LoginScreen.appendLog("updatelocation()",
+					"accuracy = " + location.getAccuracy());
 			newLatitude = location.getLatitude();
 			LoginScreen.appendLog("updatelocation()", "newlat = " + newLatitude);
 			newLongitude = location.getLongitude();
@@ -791,7 +792,7 @@ public class MainActivity extends Activity implements LocationListener {
 			setAnimation(heartPeakImage, LoginScreen.round(heart_rate, 2));
 			LoginScreen.appendLog("updatelocation()", "set animations");
 			
-			if (speed < 12 && accuracy < 15) { // If latest detected location makes sense
+			if (speed < 12) { // If latest detected location makes sense
 				distance = distance + newDistance;
 				
 				try {
