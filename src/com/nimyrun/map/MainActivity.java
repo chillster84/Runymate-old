@@ -129,6 +129,7 @@ public class MainActivity extends Activity implements LocationListener {
     CountDownTimer runIntervalTimer;
 	Route route;
 	private String m_Text = "";
+	boolean first = true;
 	
 	double startTime, elapsedTime;
 
@@ -198,6 +199,7 @@ public class MainActivity extends Activity implements LocationListener {
     		}
 		};
         
+        
 
 		// Initialize map
 		try {
@@ -256,7 +258,7 @@ public class MainActivity extends Activity implements LocationListener {
 			//longitudeField.setText("Location not available.");
 		}
 		
-		runIntervalTimer(null);
+		
 		
 		mSettings = PreferenceManager.getDefaultSharedPreferences(this);
         mPedometerSettings = new PedometerSettings(mSettings);
@@ -756,7 +758,11 @@ public class MainActivity extends Activity implements LocationListener {
 
 	private void updateLocation() {
 		LoginScreen.appendLog("updatelocation()", "entered");
-		if(location!=null) {
+		if(location!=null && location.getAccuracy() < 15) {
+			if (first) {
+				runIntervalTimer(null);
+				first = false;
+			}
 			double newDistance = 0;
 			LoginScreen.appendLog("updatelocation()", "location not null anymore?");
 			double accuracy = location.getAccuracy();

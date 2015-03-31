@@ -363,7 +363,7 @@ public class RoutesActivity extends Activity {
 		for (int i = 0; i < routes.size(); i++) {
             // Create new ImageView
             imageItem = new ImageView(this);
-			String imageUrl = getRouteUrl(routes.get(i));
+			String imageUrl = getRouteUrlSmall(routes.get(i));
 			imageLoader.DisplayImage(imageUrl, imageItem, i);
             mCarouselContainer.addView(imageItem);
             mCarouselContainer.getChildAt(i).setPadding(15, 15, 15, 15);
@@ -481,8 +481,27 @@ public class RoutesActivity extends Activity {
 			}
 			i++;
 		}
-		baseUrl += "&size=1080x1080";
-		baseUrl += "&zoom=18";
+		baseUrl += "&size=540x540";
+		baseUrl += "&zoom=18&scale=2";
+		baseUrl += "&key=AIzaSyBlSoG9MOexZBwYnwRQq0QWVGY9a7eDab0";
+		return baseUrl;
+	}
+	
+	public String getRouteUrlSmall(Route route) {
+		String baseUrl = "https://maps.googleapis.com/maps/api/staticmap?path=color:0x0000ff%7Cweight:5%7C";
+		int i = 0;
+		for (LatLng pt : route.getPath()) {
+			if (i == 0) {
+				String point = pt.latitude + "," + pt.longitude;
+				baseUrl += point;
+			} else {
+				String point = "%7C" + pt.latitude + "," + pt.longitude;
+				baseUrl += point;
+			}
+			i++;
+		}
+		baseUrl += "&size=310x310";
+		baseUrl += "&zoom=17";
 		baseUrl += "&key=AIzaSyBlSoG9MOexZBwYnwRQq0QWVGY9a7eDab0";
 		return baseUrl;
 	}
