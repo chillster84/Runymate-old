@@ -75,7 +75,7 @@ public class MainActivity extends Activity implements LocationListener {
 	private GoogleMap gMap;
 	private Polyline polyline;
 
-	private Timer timer;
+	private CountDownTimer timer;
 
 	private double latitude = 0;
 	private double longitude = 0;
@@ -234,7 +234,6 @@ public class MainActivity extends Activity implements LocationListener {
 		provider = locationManager.getBestProvider(criteria, false);
 		LoginScreen.appendLog("onCreate", "after getbestprov");
 		location = locationManager.getLastKnownLocation(provider);
-		LoginScreen.appendLog("onCreate", "after lastknown");
 
 		// Initialize location fields
 		if (location != null) {
@@ -252,10 +251,12 @@ public class MainActivity extends Activity implements LocationListener {
 
 			onLocationChanged(location);
 			
-			setTimer(SAMPLING_INTERVAL, 5);
+			setTimer(SAMPLING_INTERVAL);
 		} else {
 			//latitudeField.setText("Location not available.");
 			//longitudeField.setText("Location not available.");
+			setTimer(2);
+			LoginScreen.appendLog("location is", " null");
 		}
 		
 		
@@ -464,6 +465,7 @@ public class MainActivity extends Activity implements LocationListener {
                     break;
                 case SPEED_MSG:
                     mSpeedValue = ((int)msg.arg1)/1000f;
+                    LoginScreen.appendLog("speed value", " = " + mSpeedValue);
                     break;
                 case CALORIES_MSG:
                     mCaloriesValue = msg.arg1;
@@ -505,7 +507,7 @@ public class MainActivity extends Activity implements LocationListener {
         bindService(new Intent(MainActivity.this, 
                 StepService.class), mConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
         
-        if(elapsedTime > 0) {
+        if(elapsedTime == 0) {
         	if (mService != null && mIsRunning) {
             	LoginScreen.appendLog("bind step service", "mService is not null");
                 mService.resetValues();                    
@@ -704,28 +706,36 @@ public class MainActivity extends Activity implements LocationListener {
 		polyline = gMap.addPolyline(rectOptions);
 	}
 	
-	private void setTimer(int frequency, int delay) {
-		final Handler handler = new Handler();
-		timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				handler.post(new Runnable() {
-					@SuppressWarnings("unchecked")
-					public void run() {
-						try {
-							sample();
-						} catch (Exception e) {
-						}
-					}
-				});
+	private void setTimer(int frequency) {
+		timer = new CountDownTimer(frequency*1000, 1000) { //15second intervals for now
+			public void onTick(long millisUntilFinished) {
+				LoginScreen.appendLog("setTimer", "seconds remaining: " + millisUntilFinished / 1000);
 			}
-		}, frequency * 1000, delay * 1000);
+    		public void onFinish() {
+    			sample();
+    		}
+		};
+		timer.start();
+		
+		
 	}
 	
 	private void sample() {
 		//count = count + SAMPLING_INTERVAL;
 		count++;
+		LoginScreen.appendLog("sample(), ","count = " + count);
+		
+		if(location == null) {
+			speed = mSpeedValue;
+			LoginScreen.appendLog("sample(), ","speed = " + speed);
+			
+			speedField.setText(LoginScreen.round(((double) Math.round(speed * 100) / 100), 2) + "");
+			//heartbeat = 150 + (count / 5 * 10);
+			heartField.setText(LoginScreen.round(heart_rate, 2) + "");
+			
+			setAnimation(speedBlockerImage, speed);
+			setAnimation(heartPeakImage, LoginScreen.round(heart_rate, 2));
+		}
 
 		if (speed < 15) { // Fastest recorded running speed is about 12 m/s
 			//add a runMetric without a heart rate
@@ -734,19 +744,20 @@ public class MainActivity extends Activity implements LocationListener {
 			speedMap.put(count + "", speed);
 
 		}
+		timer.start();
 	}
 	
 	private void addRunMetric(double currentHeartRate, int totalStepsTaken) {
 		if (location != null && location.getAccuracy() < 15) {
 			LatLng currentPosition = new LatLng(location.getLatitude(),
 					location.getLongitude());
-			elapsedTime = System.currentTimeMillis() - startTime;
-			double currentSpeed = speed;
+			
 			if(currentHeartRate != 0) {
 				LoginScreen.appendLog("addrunmetric", "adding heart rate "+ currentHeartRate + " as newRunMetric");
 				LoginScreen.appendLog("addrunmetric", "with total steps = "+ totalStepsTaken);
 			}
-			
+			double currentSpeed = speed;
+			elapsedTime = System.currentTimeMillis() - startTime;
 			RunMetric newRunMetric = new RunMetric(currentPosition, LoginScreen.round(currentSpeed, 2),
 					LoginScreen.round(currentHeartRate, 2), totalStepsTaken, LoginScreen.round(elapsedTime/60000,2));
 			runMetrics.add(newRunMetric);
@@ -820,8 +831,6 @@ public class MainActivity extends Activity implements LocationListener {
 	public void onStop(){
 		if (timer != null) {
 			timer.cancel();
-			timer.purge();
-			timer = null;
 		}
 		super.onStop();
 	}
@@ -846,7 +855,10 @@ public class MainActivity extends Activity implements LocationListener {
 	public void runIntervalTimer(View v) {
 		runIntervalTimer.start();
 		
-	}
+	} 
+	
+	//copy this above one and do same for timer
+	//elapsedtime set in sample so dat on screen on the steps dont get reset
 	
 	/* readECG function. start the ECG Stream,
 	 * use a timer to record samples. once timer
@@ -870,7 +882,7 @@ public class MainActivity extends Activity implements LocationListener {
     			stopped = true;
     			LoginScreen.appendLog("readECG", "Stopping ecg stream");
     			if(Ncl.stopEcgStream(nymiHandle) == false) {
-					//error calling NCL Start ECG Stream. TODO: Abort?
+					calculateHeartRatePrecise();
 				}
     		}
 		}.start();
@@ -906,7 +918,7 @@ public class MainActivity extends Activity implements LocationListener {
              int divisor = (possibleRvalues.size()-1);
              for(int i=0; i < possibleRvalues.size()-1; i++) {
             	 current_diff = (possibleRvalues.get(i+1)-possibleRvalues.get(i));
-            	 if(current_diff < 250 && current_diff > 75) {
+            	 if(current_diff < 320 && current_diff > 70) {
             		 diff_sum += current_diff;
             	 }
             	 else {
@@ -915,36 +927,25 @@ public class MainActivity extends Activity implements LocationListener {
              }
              
 
-        	 LoginScreen.appendLog("Possible r value size", possibleRvalues.size() + "");
-             
-             diff_avg = diff_sum/divisor;
-             
-             heart_rate = 250.0*60.0/diff_avg;
+        	 LoginScreen.appendLog("divisor= ", divisor+"");
+        	 LoginScreen.appendLog("diff_sum= ", diff_sum+"");
+             if(divisor >0 && diff_sum != 0) {
+            	 diff_avg = diff_sum/divisor;
+                 LoginScreen.appendLog("diff_avg= ", diff_avg+"");
+            	 heart_rate = 250.0*60.0/diff_avg;
 
- 			heartMap.put(count + "", heart_rate);
-             
-             LoginScreen.appendLog("Possible heart rate: ", heart_rate + "");
-             
-             // add a runMetric with a valid heart rate
-             //addRunMetric(heart_rate );
-             addRunMetric(heart_rate, mStepValue);
-             LoginScreen.appendLog("after addRunMetric", " added new heartrate");
-             
-    		 
-             /* YERUSHA: value heart_rate after 60second interval. something with sample() or addmetric or something
-             mActivity.runOnUiThread(new Runnable() {
-     			public void run() {
-     				String result = "";
-     				if(heart_rate > 60 && heart_rate < 200) {
-     					result = "Your Heart Rate: " + String.format("%.2f", heart_rate) + " BPM" + "\n";
-     				}
-     				else {
-     					 result = "Error in calculation, skipped.\n";
-     				}
-     				
-     				tvIntervalHR.append(result);
-     			}
-     		});*/
+      			heartMap.put(count + "", heart_rate);
+                  
+                  LoginScreen.appendLog("Possible heart rate: ", heart_rate + "");
+                  
+               // add a runMetric with a valid heart rate
+                  addRunMetric(heart_rate, mStepValue);
+                  LoginScreen.appendLog("after addRunMetric", " added new heartrate");
+                  
+             }
+             else {
+            	 //skip this runmetric
+             }
              
              //clear arrays if user wants to measure again
              ecgSamples.clear();
