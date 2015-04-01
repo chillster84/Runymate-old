@@ -411,7 +411,7 @@ public class RoutesActivity extends Activity {
 			// we can write a method that gets the average or the best out of
 			// the runs
 			//distance is the same for the same route
-			routeDistance.setText(" " + route.getRuns().get(0).getDistance());
+			routeDistance.setText(" " + LoginScreen.round(route.getRuns().get(0).getDistance(), 2));
 			
 			//want to show best time, go through runs to find lowest time. get avg hr from best run
 			double bestTime = route.getRuns().get(0).getTime();

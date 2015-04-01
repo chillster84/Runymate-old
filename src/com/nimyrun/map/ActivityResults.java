@@ -74,9 +74,7 @@ public class ActivityResults extends Activity {
 
 		double time = LoginScreen.round(getIntent().getDoubleExtra("totalTime", 0), 2);
 		TextView timeField = (TextView) findViewById(R.id.time);
-		if(time<10) {
-			timeField.setText("0" + (int)LoginScreen.round(time, 2) + ":" + "00");
-		}
+			timeField.setText(LoginScreen.round(time, 2) + " min");
 		
 		double countTime = LoginScreen.round(getIntent().getDoubleExtra("countTime", 0), 2);
 		

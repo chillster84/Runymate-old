@@ -53,7 +53,7 @@ public class RunsActivity extends Activity {
 	public void onButtonClick(View v) {
 		if (v.getId() == R.id.newRun) {
 			
-			final CharSequence intervals[] = new CharSequence[] {"1 minute", "2 minutes", "3 minutes", "4 minutes", "5 minutes"};
+			final CharSequence intervals[] = new CharSequence[] {"30 seconds", "1 minute", "2 minutes", "3 minutes", "4 minutes", "5 minutes"};
 			
 			 mActivity.runOnUiThread(new Runnable() {
 		 		public void run() {
@@ -69,7 +69,13 @@ public class RunsActivity extends Activity {
 									MainActivity.class);
 							intent.putExtra("isNewRoute", false);
 							intent.putExtra("routePosition", routePosition);
-							intent.putExtra("interval", (which+1)*60);
+							if(which==0) {
+								intent.putExtra("interval", 30);
+							}
+							else {
+								intent.putExtra("interval", (which)*60);
+							}
+							
 					    	intent.putExtra("nymiHandle", nymiHandle);
 							startActivity(intent);
 					    }

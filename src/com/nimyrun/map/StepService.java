@@ -132,7 +132,7 @@ public class StepService extends Service {
         reloadSettings();
 
         // Tell the user we started.
-        Toast.makeText(this, "we started pedometer service bruh", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "we started pedometer service bruh", Toast.LENGTH_SHORT).show();
     }
     
     @Override
@@ -165,7 +165,7 @@ public class StepService extends Service {
         mSensorManager.unregisterListener(mStepDetector);
 
         // Tell the user we stopped.
-        Toast.makeText(this, "stopped pedometer service", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "stopped pedometer service", Toast.LENGTH_SHORT).show();
     }
 
     private void registerDetector() {

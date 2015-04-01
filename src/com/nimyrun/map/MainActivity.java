@@ -129,7 +129,6 @@ public class MainActivity extends Activity implements LocationListener {
     CountDownTimer runIntervalTimer;
 	Route route;
 	private String m_Text = "";
-	boolean first = true;
 	
 	double startTime, elapsedTime;
 
@@ -149,8 +148,7 @@ public class MainActivity extends Activity implements LocationListener {
 		Bundle b = getIntent().getExtras();
 		nymiHandle = b.getInt("nymiHandle");
 		LoginScreen.appendLog("onCreate", "nymiHandle passed over to mainactivity is " + nymiHandle);
-		//interval = b.getInt("interval");
-		interval = 20;
+		interval = b.getInt("interval");
 		LoginScreen.appendLog("onCreate", "interval is " + interval);
 		isNewRoute = (boolean) b.getBoolean("isNewRoute");
 		LoginScreen.appendLog("onCreate", "isnewRoute " + isNewRoute);
@@ -198,6 +196,8 @@ public class MainActivity extends Activity implements LocationListener {
     			readECG();
     		}
 		};
+		
+		runIntervalTimer(null);
         
         
 
@@ -344,7 +344,6 @@ public class MainActivity extends Activity implements LocationListener {
 	@Override
 	public void onLocationChanged(Location newLocation) {
 		location = newLocation;
-		LoginScreen.appendLog("onlocationchanged", " = " + newLocation.toString());
 		if (!isNewRoute && location.getAccuracy() < 15) {
 			LatLng point = new LatLng(location.getLatitude(),
 					location.getLongitude());
@@ -357,10 +356,8 @@ public class MainActivity extends Activity implements LocationListener {
 				
 				Ncl.removeBehavior(nclCallback, null, NclEventType.NCL_EVENT_ANY, nymiHandle);
 				LoginScreen.appendLog("offroute, ", "removed Nymi actions");
-				if(!first) {
 					runIntervalTimer.cancel();
 					LoginScreen.appendLog("offroute, ", "cancelled interval timer");
-				}
 				
 				LoginScreen.appendLog("offroute", mIsRunning + " mis running");
 				if (mIsRunning) {
@@ -461,19 +458,15 @@ public class MainActivity extends Activity implements LocationListener {
                     break;
                 case PACE_MSG:
                     mPaceValue = msg.arg1;
-                    LoginScreen.appendLog("pace count", " = " + mPaceValue);
                     break;
                 case DISTANCE_MSG:
                     mDistanceValue = ((int)msg.arg1)/1000f;
-                    LoginScreen.appendLog("distance count", " = " + mDistanceValue);
                     break;
                 case SPEED_MSG:
                     mSpeedValue = ((int)msg.arg1)/1000f;
-                    LoginScreen.appendLog("speed count", " = " + mSpeedValue);
                     break;
                 case CALORIES_MSG:
                     mCaloriesValue = msg.arg1;
-                    LoginScreen.appendLog("calories count", " = " + mStepValue);
                     break;
                 default:
                     super.handleMessage(msg);
@@ -512,21 +505,24 @@ public class MainActivity extends Activity implements LocationListener {
         bindService(new Intent(MainActivity.this, 
                 StepService.class), mConnection, Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
         
-        if (mService != null && mIsRunning) {
-        	LoginScreen.appendLog("bind step service", "mService is not null");
-            mService.resetValues();                    
+        if(elapsedTime > 0) {
+        	if (mService != null && mIsRunning) {
+            	LoginScreen.appendLog("bind step service", "mService is not null");
+                mService.resetValues();                    
+            }
+            else {    
+                SharedPreferences state = getSharedPreferences("state", 0);
+                SharedPreferences.Editor stateEditor = state.edit();
+                    stateEditor.putInt("steps", 0);
+                    stateEditor.putInt("pace", 0);
+                    stateEditor.putFloat("distance", 0);
+                    stateEditor.putFloat("speed", 0);
+                    stateEditor.putFloat("calories", 0);
+                    stateEditor.commit();
+            }
+            LoginScreen.appendLog(TAG, "[SERVICE] Bind - reset step values");
         }
-        else {    
-            SharedPreferences state = getSharedPreferences("state", 0);
-            SharedPreferences.Editor stateEditor = state.edit();
-                stateEditor.putInt("steps", 0);
-                stateEditor.putInt("pace", 0);
-                stateEditor.putFloat("distance", 0);
-                stateEditor.putFloat("speed", 0);
-                stateEditor.putFloat("calories", 0);
-                stateEditor.commit();
-        }
-        LoginScreen.appendLog(TAG, "[SERVICE] Bind - reset step values");
+        
     }
 
     private void unbindStepService() {
@@ -741,15 +737,16 @@ public class MainActivity extends Activity implements LocationListener {
 	}
 	
 	private void addRunMetric(double currentHeartRate, int totalStepsTaken) {
-		LoginScreen.appendLog("in addrunmetric", " adding " + currentHeartRate);
 		if (location != null && location.getAccuracy() < 15) {
 			LatLng currentPosition = new LatLng(location.getLatitude(),
 					location.getLongitude());
-			LoginScreen.appendLog("in addrunmetric", "after currentPos");
 			elapsedTime = System.currentTimeMillis() - startTime;
 			double currentSpeed = speed;
-			LoginScreen.appendLog("addrunmetric", "adding heart rate "+ currentHeartRate + " as newRunMetric");
-			LoginScreen.appendLog("addrunmetric", "with total steps = "+ totalStepsTaken);
+			if(currentHeartRate != 0) {
+				LoginScreen.appendLog("addrunmetric", "adding heart rate "+ currentHeartRate + " as newRunMetric");
+				LoginScreen.appendLog("addrunmetric", "with total steps = "+ totalStepsTaken);
+			}
+			
 			RunMetric newRunMetric = new RunMetric(currentPosition, LoginScreen.round(currentSpeed, 2),
 					LoginScreen.round(currentHeartRate, 2), totalStepsTaken, LoginScreen.round(elapsedTime/60000,2));
 			runMetrics.add(newRunMetric);
@@ -760,10 +757,6 @@ public class MainActivity extends Activity implements LocationListener {
 	private void updateLocation() {
 		LoginScreen.appendLog("updatelocation()", "entered");
 		if(location!=null && location.getAccuracy() < 15) {
-			if (first) {
-				runIntervalTimer(null);
-				first = false;
-			}
 			double newDistance = 0;
 			LoginScreen.appendLog("updatelocation()", "location not null anymore?");
 			// double accuracy = location.getAccuracy();
@@ -781,7 +774,7 @@ public class MainActivity extends Activity implements LocationListener {
 			
 			newDistance = getDistance(latitude, longitude, newLatitude,
 					newLongitude);
-			LoginScreen.appendLog("updatelocation()", "newdistance = " + distance);
+			LoginScreen.appendLog("updatelocation()", "newdistance = " + newDistance);
 			
 			speed = newDistance / (LOCATION_MIN_TIME * errorFactor);
 			
@@ -869,7 +862,7 @@ public class MainActivity extends Activity implements LocationListener {
 			//error calling NCL Start ECG Stream. TODO: Abort?
 		}
 		
-		CountDownTimer ecgScan = new CountDownTimer(7000, 1000) {
+		CountDownTimer ecgScan = new CountDownTimer(10000, 1000) {
 			public void onTick(long millisUntilFinished) {
 				LoginScreen.appendLog("readECG Timer", "seconds remaining: " + millisUntilFinished / 1000);
 			}
@@ -889,7 +882,7 @@ public class MainActivity extends Activity implements LocationListener {
     	int delta_y = 10000;
     	
     	try {
-    		LoginScreen.appendLog("Calculating heart rate", "0");
+    		LoginScreen.appendLog("Calculating heart rate", " after got samples");
     		
     		//ecgSamples array filled
              for(int i=600; i < ecgSamples.size()-6; i++) {
@@ -898,7 +891,7 @@ public class MainActivity extends Activity implements LocationListener {
             			 if((ecgSamples.get(i) - ecgSamples.get(i+delta_x)) * (ecgSamples.get(i) - ecgSamples.get(i-delta_x)) > 0) {
             				 //make sure R is higher than Q and S or lower than Q and S (opposite hand measurements upside down)
             					 possibleRvalues.add(i); //add to R value array
-    	        				 LoginScreen.appendLog("Possible R value:", i + "\n");
+    	        				 LoginScreen.appendLog("Possible R value:", i + "");
     	        				 i=i+50; //skip some samples to avoid duplicates
             			 }
             		 }
@@ -922,7 +915,7 @@ public class MainActivity extends Activity implements LocationListener {
              }
              
 
-        	 LoginScreen.appendLog("Possible r value size", possibleRvalues.size() + "\n");
+        	 LoginScreen.appendLog("Possible r value size", possibleRvalues.size() + "");
              
              diff_avg = diff_sum/divisor;
              
@@ -930,12 +923,12 @@ public class MainActivity extends Activity implements LocationListener {
 
  			heartMap.put(count + "", heart_rate);
              
-             LoginScreen.appendLog("Possible heart rate: ", heart_rate + "\n");
+             LoginScreen.appendLog("Possible heart rate: ", heart_rate + "");
              
              // add a runMetric with a valid heart rate
              //addRunMetric(heart_rate );
              addRunMetric(heart_rate, mStepValue);
-             LoginScreen.appendLog("after addRunMetric", " wasup");
+             LoginScreen.appendLog("after addRunMetric", " added new heartrate");
              
     		 
              /* YERUSHA: value heart_rate after 60second interval. something with sample() or addmetric or something
@@ -998,7 +991,6 @@ public class MainActivity extends Activity implements LocationListener {
 				//5 samples come in in ((NclEventEcg) event).samples[i] i = 0-4
 				if(!stopped) {
 					for(int i=0; i<5; i++) {
-						LoginScreen.appendLog("", ((NclEventEcg) event).samples[i] + ", ");
 						ecgSamples.add(((NclEventEcg) event).samples[i]);
 					}
 				}
